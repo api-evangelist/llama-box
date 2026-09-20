@@ -1,0 +1,155 @@
+generated: '2026-09-19'
+method: probed
+source: https://llama.box/yo/.well-known/agent.json
+card:
+  file: a2a/llama-box-agent-card.json
+discovery:
+  path: /yo/.well-known/agent.json
+  canonical: false
+  host: llama.box
+  mount: /yo
+  note: >-
+    Served at the LEGACY pre-0.3 filename (agent.json) AND under a sub-path: the FastAPI service is mounted
+    at https://llama.box/yo behind Caddy, and the card is one of its routes (operationId
+    agent_card__well_known_agent_json_get in the same app's OpenAPI). Neither RFC 8615 host-root path
+    exists — https://llama.box/.well-known/agent-card.json and /.well-known/agent.json both 404 (0 bytes,
+    Caddy) — and the canonical filename under the mount, /yo/.well-known/agent-card.json, returns the app's
+    JSON 404 ({"detail":"Not Found"}, 22 bytes). A client that derives the card location from the host will
+    not find it; a2aregistry.org lists the sub-path as wellKnownURI, which is how it entered the harvest
+    backlog. A negative-control path under the mount (/yo/.well-known/llama-box-negative-control-7f3ab91c.json)
+    also 404s, so the 200 is a served document and not a catch-all. Ownership: the card's
+    provider.organization is "Chado Studio"; the OpenAPI on the same mount titles itself "crvUSD Yield
+    Optimizer API" 1.1.0 with the identical description text, /yo/health self-identifies as
+    "crvusd-yield-optimizer-api" 1.1.0, and /yo/api/pricing names api@chado.studio as the contact.
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://llama.box/yo/.well-known/agent.json
+  http_status: 200
+  content_type: application/json
+  server: uvicorn (via Caddy)
+  body_parses_as: JSON object with AgentCard shape (name, description, url, version, protocolVersion, provider, capabilities, defaultInputModes, defaultOutputModes, skills)
+  corroborating_probes:
+  - url: https://llama.box/yo/.well-known/agent-card.json
+    http_status: 404
+    note: Canonical filename under the mount; the app's JSON 404.
+  - url: https://llama.box/.well-known/agent-card.json
+    http_status: 404
+  - url: https://llama.box/.well-known/agent.json
+    http_status: 404
+  - url: https://llama.box/yo
+    http_status: 404
+    note: The card's declared url. GET returns an empty Caddy 404; POST of a JSON-RPC body returns the same empty 404. It is not the RPC endpoint.
+  - url: https://llama.box/yo/a2a
+    method: POST
+    body: '{"jsonrpc":"2.0","id":1,"method":"message/send","params":{"message":{"role":"user","parts":[{"kind":"text","text":"What is the best yield for crvUSD?"}],"messageId":"probe-1"}}}'
+    http_status: 402
+    response: '{}'
+    response_header: 'PAYMENT-REQUIRED: <base64 x402 v2 challenge> — decoded: {"x402Version":2,"error":"Payment required","resource":{"url":"https://llama.box/a2a","description":"crvUSD Yield Optimizer - POST /a2a","mimeType":"application/json"},"accepts":[{"scheme":"exact","network":"eip155:84532","asset":"0x036CbD53842c5426634e7929541eC2318f3dCF7e","amount":"10000","payTo":"0x6a1175D0EA0e6817786Ce51F1C4F3294F907f410","maxTimeoutSeconds":300,"extra":{"name":"USDC","version":"2"}}]}'
+    note: The live JSON-RPC handler (OpenAPI operationId a2a_endpoint_a2a_post). Unpaid, it answers a real x402 v2 challenge for 10000 base units ($0.01) of USDC on Base Sepolia. Nothing was paid and no task was created.
+  - url: https://llama.box/yo/a2a/stream
+    method: POST
+    http_status: 402
+    note: The SSE twin (a2a_stream_endpoint_a2a_stream_post) is gated the same way.
+  - url: https://llama.box/yo/health
+    http_status: 200
+    response: '{"status":"ok","service":"crvusd-yield-optimizer-api","version":"1.1.0","a2a":true}'
+  - url: https://chado.studio/
+    http_status: 0
+    note: The card's provider.url. The hostname has no A record (dig returned nothing for chado.studio and www.chado.studio, 2026-09-19); every request failed to connect.
+  - url: https://a2aregistry.org/api/agents?search=crvUSD
+    http_status: 200
+    note: Registry listing id 5d067dae-9a9d-4539-a08b-2fe345dccad1, author "Chado Studio", wellKnownURI the sub-path above, conformance true. The listing was the lead; the card was fetched from the provider's host.
+agent_card:
+  name: crvUSD Yield Optimizer
+  description: >-
+    Multi-chain crvUSD yield optimizer agent. Discovers yield opportunities across scrvUSD, LlamaLend,
+    Convex and StakeDAO on Ethereum, Arbitrum, Optimism and Fraxtal. Provides real-time APY data, risk
+    scoring (0-100), and portfolio rebalance recommendations. Accepts natural language queries.
+  url: https://llama.box/yo
+  rpc_endpoint_observed: https://llama.box/yo/a2a
+  version: 1.1.0
+  protocol_version: 0.2.5
+  preferred_transport: null
+  provider:
+    organization: Chado Studio
+    url: https://chado.studio
+  capabilities:
+    streaming: true
+    push_notifications: false
+    state_transition_history: true
+  default_input_modes: [application/json, text/plain]
+  default_output_modes: [application/json, text/plain]
+  security_schemes: null
+  security: null
+  documentation_url: null
+  icon_url: null
+  skill_count: 4
+  skills:
+  - {id: best-yield, name: Best Yield Finder, tags: [yield, apy, defi, crvusd], rest_operation: best_yield_api_best_yield_get}
+  - {id: pools, name: Pool Discovery, tags: [pools, list, filter, defi], rest_operation: list_pools_api_pools_get}
+  - {id: risk-score, name: Risk Assessment, tags: [risk, assessment, score, safety], rest_operation: risk_score_api_risk_score__pool_id__get}
+  - {id: rebalance, name: Rebalance Advisor, tags: [rebalance, portfolio, allocation, strategy], rest_operation: simulate_rebalance_api_rebalance_post}
+  skill_invocation: >-
+    Per the /a2a operation description in the OpenAPI: message/send with a TextPart in natural language, or
+    with params.skill set to one of the four ids and a DataPart carrying the structured parameters
+    ({"chain":"ethereum","top":5}). The rest_operation column is the REST twin each skill's description
+    names; it is a reading of the two documents side by side, not a provider-published mapping.
+conformance:
+  spec: A2A 1.0.0
+  grade: near-conformant
+  protocol_version: '0.2.5'
+  preferred_transport: null
+  hard_checks:
+    capabilities_is_object: true
+    protocol_version_present: true
+    skills_is_array: true
+  optional_fields:
+    default_input_modes: true
+    default_output_modes: true
+    preferred_transport: false
+  grade_basis: >-
+    All three hard checks pass — capabilities is an object (streaming, pushNotifications,
+    stateTransitionHistory), protocolVersion is present ("0.2.5"), skills is an array of four skills each
+    with id, name, description, tags and examples. preferredTransport is absent, so the grade is
+    near-conformant rather than conformant, the same basis on which the catalog graded ActiveCampaign.
+    defaultInputModes and defaultOutputModes are present.
+  deviations:
+  - no-preferredTransport
+  - field: discovery path
+    observed: /yo/.well-known/agent.json
+    note: Legacy filename, and not at the host root. See discovery.note.
+  - field: url
+    observed: https://llama.box/yo
+    note: >-
+      Not the JSON-RPC endpoint. GET and POST to it both return an empty 404 from Caddy; the handler is
+      https://llama.box/yo/a2a. A client that POSTs to the card's url as the spec directs gets nothing back.
+  - field: protocolVersion
+    observed: '0.2.5'
+    note: A pre-0.3 revision — no preferredTransport, no additionalInterfaces, no supportedInterfaces. Recorded, not penalised beyond the optional-field grade.
+  - field: securitySchemes / security / capabilities.extensions
+    observed: absent
+    note: >-
+      The card declares no authentication and no payment extension, yet every RPC call is gated by x402
+      (HTTP 402 with a PAYMENT-REQUIRED header, $0.01 USDC on Base Sepolia) and the REST contract accepts an
+      optional X-API-Key that bypasses it. Unlike cards that declare the a2a-x402 extension, an agent
+      reading this card cannot learn from it that payment is the access model; it discovers that on its
+      first 402.
+  - field: x402 challenge resource.url
+    observed: https://llama.box/a2a
+    note: The challenge names the route without the /yo mount prefix, so the resource URL in the payment requirement does not match the URL the request was sent to (https://llama.box/yo/a2a). Observed, not interpreted.
+  - field: provider.url
+    observed: https://chado.studio
+    note: Does not resolve in DNS (2026-09-19). The only working contact found is api@chado.studio in /yo/api/pricing.
+  - field: documentationUrl / iconUrl / signatures
+    observed: absent
+    note: Swagger UI at https://llama.box/yo/docs and the OpenAPI at /yo/openapi.json exist but are not linked from the card; no JWS signature block.
+  - field: description chains vs OpenAPI description
+    observed: card lists Ethereum, Arbitrum, Optimism, Fraxtal; the OpenAPI info.description adds Base
+    note: The two documents on the same mount disagree on whether Base is a supported chain. Recorded as a divergence between provider documents.
+surface_relationship:
+  note: >-
+    One FastAPI app at https://llama.box/yo carries both surfaces: ten REST operations (openapi/) and the
+    A2A JSON-RPC handler at /a2a plus its SSE twin at /a2a/stream. The four skills map one-to-one onto the
+    two free reads and the two paid operations; the paid REST calls and the A2A calls share the same x402
+    price list at /api/pricing. No MCP server exists on this host (POST tools/list to /yo and /yo/mcp both
+    404), and no other llama.box dashboard exposes an API of its own.

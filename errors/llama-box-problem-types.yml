@@ -1,0 +1,51 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/llama-box-crvusd-yield-optimizer-openapi.yml
+probed: true
+format: fastapi-detail
+envelope:
+  media_type: application/json
+  fields:
+  - name: detail
+    description: A string for simple errors (401, 404) or an array of ValidationError objects (loc[], msg, type, input, ctx) for 422.
+  observed:
+  - {status: 401, body: '{"detail":"Invalid API key"}', request: 'GET https://llama.box/yo/api/best-yield?top=1 with X-API-Key: invalid-probe', fetched: '2026-09-19', declared_in_spec: false}
+  - {status: 402, body: '{}', header: 'PAYMENT-REQUIRED: <base64 x402 v2 challenge>', request: 'POST https://llama.box/yo/a2a, POST /yo/a2a/stream, POST /yo/api/rebalance — all unpaid', fetched: '2026-09-19', declared_in_spec: false, note: 'The body is an empty object; the whole error is in the header. Decoded in a2a/llama-box-a2a.yml.'}
+  - {status: 404, body: '{"detail":"Pool not found: doesnotexist"}', request: 'GET https://llama.box/yo/api/risk-score/doesnotexist', fetched: '2026-09-19', declared_in_spec: false, note: 'Returned WITHOUT a 402 — the pool lookup runs before the payment gate on this route.'}
+  - {status: 404, body: '{"detail":"Not Found"}', request: 'any unknown route under https://llama.box/yo/', fetched: '2026-09-19', note: 'FastAPI default, 22 bytes.'}
+  - {status: 404, body: '', request: 'GET or POST https://llama.box/yo (bare mount) and any unknown host-root path', fetched: '2026-09-19', note: 'Caddy, 0 bytes.'}
+  - {status: 422, body: '{"detail":[{"type":"int_parsing","loc":["query","limit"],"msg":"Input should be a valid integer, unable to parse string as an integer","input":"abc"}]}', request: 'GET https://llama.box/yo/api/pools?limit=abc', fetched: '2026-09-19', declared_in_spec: true}
+  note: >-
+    Not RFC 9457: no type URI, title, status or instance fields. The contract declares only 200 and 422 on
+    every operation; 401, 402 and 404 are real runtime responses the spec does not document. No 429 was
+    observed or declared.
+problem_types:
+- status: 401
+  title: Invalid API key
+  detail: An X-API-Key header was sent and rejected.
+  declared: false
+  source_operations: [list_pools_api_pools_get, best_yield_api_best_yield_get, risk_score_api_risk_score__pool_id__get, simulate_rebalance_api_rebalance_post, a2a_endpoint_a2a_post, a2a_stream_endpoint_a2a_stream_post]
+  remediation: Omit the header on free operations; on paid operations either pay via x402 or obtain a valid key (issuance undocumented — contact api@chado.studio).
+- status: 402
+  title: Payment required (x402)
+  detail: The operation is priced per request; the PAYMENT-REQUIRED header carries the x402 v2 challenge (scheme exact, USDC on eip155:84532, payTo, amount, maxTimeoutSeconds 300).
+  declared: false
+  source_operations: [risk_score_api_risk_score__pool_id__get, simulate_rebalance_api_rebalance_post, a2a_endpoint_a2a_post, a2a_stream_endpoint_a2a_stream_post]
+  remediation: Sign the payment described in the challenge and resend the identical request with an X-PAYMENT header (per /api/pricing how_it_works).
+- status: 404
+  title: Pool not found
+  detail: 'detail: "Pool not found: <pool_id>". pool_id is the 12-character hash from /api/pools or a 0x pool address.'
+  declared: false
+  source_operations: [risk_score_api_risk_score__pool_id__get]
+  remediation: Take pool_id or address from a list_pools_api_pools_get response.
+- status: 422
+  title: Validation Error
+  detail: Request parameter or body failed schema validation; detail[] lists each failure with loc, msg, type and the offending input.
+  declared: true
+  schema: HTTPValidationError
+  source_operations: [access_log_api_access_log_get, list_pools_api_pools_get, best_yield_api_best_yield_get, risk_score_api_risk_score__pool_id__get, simulate_rebalance_api_rebalance_post, a2a_endpoint_a2a_post, a2a_stream_endpoint_a2a_stream_post]
+  remediation: Respect the declared bounds — limit 1-500 and offset >= 0 on /api/pools, top 1-50 on /api/best-yield, limit 1-100 on /api/access-log; current_allocation is required on /api/rebalance.
+gaps:
+- The contract declares no 401, 402, 404, 429 or 5xx response on any operation.
+- The 402 body is empty; a client that does not read the PAYMENT-REQUIRED header sees an unexplained failure.
+- No error code registry, request id or documentation link accompanies any error.

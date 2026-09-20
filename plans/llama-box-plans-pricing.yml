@@ -1,0 +1,47 @@
+generated: '2026-09-19'
+method: probed
+source: https://llama.box/yo/api/pricing
+docs:
+- https://llama.box/yo/docs
+plan_count: 2
+currency: USD-denominated, settled in USDC
+model: pay-per-request via x402 on the Base Sepolia testnet (eip155:84532); no subscription, no signup; an unpublished API-key tier bypasses payment
+summary: >-
+  The provider publishes its prices as a machine-readable JSON document at GET /yo/api/pricing rather than a
+  pricing page. Two tiers are stated in substance: a free tier of six endpoints, and pay-per-request on the
+  four priced endpoints at $0.005-$0.01 each, paid in USDC through x402 — on the Base Sepolia TESTNET, so no
+  real value changes hands today. The rebalance operation's description mentions a "pro or enterprise tier"
+  unlocked by X-API-Key, but no price, page or signup for it exists anywhere found; it is recorded as
+  unpublished rather than as a plan. The llama.box hub's own /pricing path is a "Chado Labs OÜ" bank-transfer
+  checkout template (Starter, $500/month, order #000000) unrelated to this API and is not a pointer here.
+plans:
+- id: free
+  name: Free endpoints
+  price: 0
+  currency: USD
+  period: per request
+  included: [GET /health, GET /api/pools, GET /api/best-yield, GET /api/pricing, GET /.well-known/agent.json, GET /docs, 'GET /api/access-log (free per its own description)']
+  limits: ['limit <= 500 per /api/pools page', 'top <= 50 on /api/best-yield', 'no published request-rate cap']
+  auth: none
+- id: pay-per-request
+  name: Pay-per-request (x402)
+  price: null
+  currency: USDC
+  period: per request
+  payment_protocol: x402 (HTTP 402 Payment Required), version 2 observed
+  network: Base Sepolia testnet (eip155:84532) — verbatim
+  wallet: '0x6a1175D0EA0e6817786Ce51F1C4F3294F907f410'
+  prices:
+  - {endpoint: 'GET /api/risk-score/{pool_id}', operation: risk_score_api_risk_score__pool_id__get, price: 0.005, currency: USD, verbatim: '$0.005'}
+  - {endpoint: 'POST /api/rebalance', operation: simulate_rebalance_api_rebalance_post, price: 0.01, currency: USD, verbatim: '$0.01'}
+  - {endpoint: 'POST /a2a', operation: a2a_endpoint_a2a_post, price: 0.01, currency: USD, verbatim: '$0.01', observed_challenge_amount: '10000 base units of the 6-decimal USDC asset = $0.01'}
+  - {endpoint: 'POST /a2a/stream', operation: a2a_stream_endpoint_a2a_stream_post, price: 0.01, currency: USD, verbatim: '$0.01'}
+  how_it_works_verbatim: '1. Request any paid endpoint without payment → get 402 with payment details. 2. Sign a USDC payment on Base using the returned parameters. 3. Resend request with X-PAYMENT header → get 200 with data.'
+  overage: not applicable — every call is metered
+  auth: x402 payment, or X-API-Key
+unpublished_tiers:
+- name: pro / enterprise
+  evidence: '$.paths[''/api/rebalance''].post.description — "Requires pro or enterprise tier."'
+  price: null
+  note: No page, price or signup found; the only route to it is the contact address api@chado.studio in /api/pricing.
+contact: api@chado.studio

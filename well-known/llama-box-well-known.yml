@@ -1,0 +1,137 @@
+generated: '2026-09-19'
+method: probed
+source: >-
+  Live GET probes of the named /.well-known/* path list on llama.box (host root and the /yo application
+  mount), chado.studio and www.chado.studio, 2026-09-19. Every row below is a request that was actually
+  issued; every status is the one returned.
+summary:
+  hosts_probed: 4
+  paths_probed: 55
+  documents_served: 1
+  hit_count: 1
+  path_echo_control: passed
+  note: >-
+    llama.box serves exactly one well-known document, and not at the host root: the A2A agent card at the
+    legacy filename under the application mount, https://llama.box/yo/.well-known/agent.json (captured and
+    graded in a2a/). Every named path at the host root returns an empty Caddy 404 (0 bytes, no body), and
+    under the /yo mount the FastAPI app returns a real JSON 404 ({"detail":"Not Found"}, 22 bytes); a
+    negative-control path that cannot exist 404s in both places, so the single 200 is a served document
+    and not a catch-all. No security.txt, no OAuth/OIDC discovery, no RFC 9728 protected-resource metadata
+    (relevant because the paid A2A surface has no discoverable auth model), no RFC 9727 API catalog, no
+    APIs.json, no AAuth resource document, no ai-plugin, no UCP/ACP manifest. www.llama.box has an A record
+    but nothing answers on 443. chado.studio, the provider.url in the agent card, has no DNS A record at
+    all. There is no MCP host to probe. Outside /.well-known/, the host root serves robots.txt (755 bytes,
+    allow-all for GPTBot, ClaudeBot, PerplexityBot, CCBot and eleven other AI agents, Disallow /secaudit/)
+    and llms.txt (captured in llms/).
+hosts:
+- host: llama.box
+  role: Website (hub) — host root
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+    note: The card lives under the /yo mount, not at the host root — see the next host entry.
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/api-catalog.json
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/ucp.json
+    status: 404
+  - path: /.well-known/acp.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /apis.yml
+    status: 404
+  - path: /.well-known/change-password
+    status: 404
+  - path: /.well-known/llama-box-negative-control-7f3ab91c.json
+    status: 404
+    note: Negative control — a path that cannot exist. 404 (0 bytes), so this host does not echo paths.
+  - path: /openapi.json
+    status: 404
+  - path: /llms.txt
+    status: 200
+    content_type: text/plain; charset=utf-8
+    bytes: 12619
+    file: ../llms/llama-box-llms.txt
+    note: Not a /.well-known/ path; recorded because it is the hub's one other machine-readable document.
+  - path: /robots.txt
+    status: 200
+    content_type: text/plain; charset=utf-8
+    bytes: 755
+    note: Not saved. Allow-all for sixteen named AI crawlers; Disallow /secaudit/; names the sitemap and llms.txt.
+- host: https://llama.box/yo
+  role: API host — the crvUSD Yield Optimizer FastAPI app (OpenAPI servers[] "/yo"), A2A JSON-RPC host
+  documents:
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: application/json
+    bytes: 2061
+    file: ../a2a/llama-box-agent-card.json
+    standard: A2A Agent Card (protocolVersion 0.2.5)
+    note: Legacy pre-0.3 filename. Saved verbatim under a2a/ and graded near-conformant in a2a/llama-box-a2a.yml.
+  - path: /.well-known/agent-card.json
+    status: 404
+    note: Canonical filename; the app's JSON 404 ({"detail":"Not Found"}, 22 bytes).
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    note: Probed at the host root (above), which is the RFC 9728 location for this resource server; the mount serves no /.well-known/ route other than agent.json.
+  - path: /.well-known/llama-box-negative-control-7f3ab91c.json
+    status: 404
+    note: Negative control under the mount — the app's JSON 404 (22 bytes). Paths are not echoed.
+  - path: /openapi.json
+    status: 200
+    content_type: application/json
+    bytes: 14743
+    file: ../openapi/_original/llama-box-crvusd-yield-optimizer-openapi-original.json
+    note: Not a /.well-known/ path; the contract itself, saved verbatim under openapi/.
+- host: www.llama.box
+  role: www alias
+  documents:
+  - path: /.well-known/security.txt
+    status: 0
+    note: A record 51.83.161.121 (same as the apex) but no service answers on 443 — connection failed. Nothing else probed.
+- host: chado.studio
+  role: provider.url named in the agent card
+  dns: no A record for chado.studio or www.chado.studio (dig, 2026-09-19)
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 0
+  - path: /.well-known/agent.json
+    status: 0
+  - path: /.well-known/security.txt
+    status: 0
+  - path: /.well-known/openid-configuration
+    status: 0
+  - path: /.well-known/oauth-authorization-server
+    status: 0
+  - path: /.well-known/oauth-protected-resource
+    status: 0
+  - path: /.well-known/api-catalog
+    status: 0
+  - path: /.well-known/ai-plugin.json
+    status: 0
+  - path: /.well-known/apis.json
+    status: 0
+  - path: /llms.txt
+    status: 0
+  - path: /robots.txt
+    status: 0

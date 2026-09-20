@@ -64,5 +64,10 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Chado Studio is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry) and added to the network as a stub for full-pipeline profiling.
-- https://llama.box/
+Chado Studio operates llama.box, a desktop-style hub for the Curve Finance ecosystem, and the crvUSD Yield Optimizer API mounted at https://llama.box/yo — an OpenAPI 3.1.0 contract (10 operations, Swagger UI and ReDoc), an A2A 0.2.5 agent card at /yo/.well-known/agent.json with four skills, and per-request x402 payment in USDC on the Base Sepolia testnet for the risk-score, rebalance and A2A calls. Surfaced via the API Evangelist harvest backlog (source: a2a-registry) and profiled 2026-09-19.
+
+- Website: https://llama.box/
+- API reference (Swagger UI): https://llama.box/yo/docs
+- OpenAPI: https://llama.box/yo/openapi.json
+- Agent card: https://llama.box/yo/.well-known/agent.json
+- Pricing (x402): https://llama.box/yo/api/pricing

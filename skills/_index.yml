@@ -1,0 +1,36 @@
+generated: '2026-09-19'
+method: generated
+source: >-
+  openapi/llama-box-crvusd-yield-optimizer-openapi.yml (every operationId verified against the spec) plus the
+  agent card, the live /api/pricing response and the observed 401/402/404 behaviour recorded in errors/.
+  Chado Studio publishes no skills, AGENTS.md or agent instructions of its own; its llms.txt (llms/) is a
+  link directory for the hub, not operating instructions. All four skills are generated.
+skills:
+- file: llama-box-find-best-yield.md
+  name: llama-box-find-best-yield
+  method: generated
+  description: Discover crvUSD yield pools and return the top candidates by APY using only the free operations.
+  api: openapi/llama-box-crvusd-yield-optimizer-openapi.yml
+  operations: [list_pools_api_pools_get, best_yield_api_best_yield_get]
+  cost: free
+- file: llama-box-assess-pool-risk.md
+  name: llama-box-assess-pool-risk
+  method: generated
+  description: Score one pool's risk 0-100 through the x402-paid risk endpoint, validating the id for free first.
+  api: openapi/llama-box-crvusd-yield-optimizer-openapi.yml
+  operations: [list_pools_api_pools_get, pricing_api_pricing_get, risk_score_api_risk_score__pool_id__get]
+  cost: x402 $0.005 per score (Base Sepolia testnet USDC) or X-API-Key
+- file: llama-box-simulate-rebalance.md
+  name: llama-box-simulate-rebalance
+  method: generated
+  description: Submit a current allocation and receive a recommended rebalance — a paid simulation with no on-chain effect.
+  api: openapi/llama-box-crvusd-yield-optimizer-openapi.yml
+  operations: [list_pools_api_pools_get, simulate_rebalance_api_rebalance_post]
+  cost: x402 $0.01 per simulation or X-API-Key
+- file: llama-box-ask-the-agent.md
+  name: llama-box-ask-the-agent
+  method: generated
+  description: Read the A2A card and converse with the agent over JSON-RPC or SSE, including tasks/cancel.
+  api: openapi/llama-box-crvusd-yield-optimizer-openapi.yml
+  operations: [agent_card__well_known_agent_json_get, a2a_endpoint_a2a_post, a2a_stream_endpoint_a2a_stream_post]
+  cost: x402 $0.01 per message/send or X-API-Key

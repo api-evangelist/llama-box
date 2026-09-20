@@ -1,0 +1,32 @@
+generated: '2026-09-19'
+method: searched
+source: https://llama.box/yo/openapi.json
+derived_from: openapi/llama-box-crvusd-yield-optimizer-openapi.yml
+docs:
+- https://llama.box/yo/docs
+- https://llama.box/yo/health
+versioning:
+  scheme: unversioned paths; version carried in the document and the service identity
+  current_version: 1.1.0
+  evidence: OpenAPI info.version 1.1.0; agent card version 1.1.0; GET /yo/health {"service":"crvusd-yield-optimizer-api","version":"1.1.0"} — the three surfaces agree.
+  policy_published: false
+  note: Paths carry no version segment (/api/pools, /a2a). The llama.box hub labels itself "Beta v0.56"; that is the desktop shell's version, not the API's.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  deprecated_operations: []
+  note: No operation is marked deprecated and no deprecation or sunset policy is published anywhere on llama.box (/changelog, /blog, /status, /terms all 404). No Deprecation pointer is emitted.
+status_page: null
+status_page_note: >-
+  None for this API. https://llama.box/curve-api-health/ is a dashboard that monitors CURVE FINANCE's public
+  API endpoints (latency, errors, indexer lag) — a third party's surface, not this one — and
+  GET /yo/api/access-log is a public in-memory log of the service's last 100 requests, which is observability
+  but not a status page. No StatusPage pointer is emitted.
+sla:
+  url: null
+  uptime_target: null
+  note: None published. a2aregistry.org reports its own uptime_percentage and avg_response_time_ms for the agent, which is the registry's measurement, not a provider commitment.
+changelog: null
+changelog_note: No dated changelog or release notes found (/changelog 404; no GitHub repository located).

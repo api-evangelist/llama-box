@@ -1,0 +1,61 @@
+generated: '2026-09-19'
+method: derived
+status: candidate
+source: openapi/llama-box-crvusd-yield-optimizer-openapi.yml
+summary: >-
+  Chado Studio ships NO MCP server. Searched 2026-09-19: no MCP mention in the OpenAPI, the agent card, the
+  llms.txt or the Swagger UI; POST tools/list to https://llama.box/yo returned an empty Caddy 404 and to
+  https://llama.box/yo/mcp the app's JSON 404; https://llama.box/mcp 404; no npm or PyPI package and no
+  GitHub organisation was found under llama.box, Chado Studio or the API name. The provider's agent surface
+  is A2A (a2a/), not MCP. The tool list below is a CANDIDATE derived one-to-one from the provider's own
+  OpenAPI operations so an MCP wrapper could be built against a real contract; it asserts nothing about what
+  the provider serves, and no MCPServer pointer is emitted for it.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: none
+  verified: derived
+  note: >-
+    Nobody ships a server. If one were built from this candidate, four of the six tools call operations
+    gated by x402 payment (see authentication/), which an MCP client would meet as an HTTP 402 on the
+    backing call.
+server:
+  name: llama-box-crvusd-yield-optimizer
+  transport: null
+  url: null
+tools:
+- name: list_pools
+  description: List all crvUSD yield pools with optional filters (chain, source, min_apy, min_tvl, risk, sort_by, order, limit, offset).
+  source_operation: openapi/llama-box-crvusd-yield-optimizer-openapi.yml#list_pools_api_pools_get
+  cost: free
+- name: best_yield
+  description: Return the top-N pools by APY, optionally filtered by chain, source and maximum risk level.
+  source_operation: openapi/llama-box-crvusd-yield-optimizer-openapi.yml#best_yield_api_best_yield_get
+  cost: free
+- name: risk_score
+  description: Risk assessment (0-100, higher = riskier) for one pool by 12-character pool_id or 0x address, with factors and a recommendation.
+  source_operation: openapi/llama-box-crvusd-yield-optimizer-openapi.yml#risk_score_api_risk_score__pool_id__get
+  cost: x402 $0.005 per call, or X-API-Key
+- name: simulate_rebalance
+  description: Simulate a rebalance — send current_allocation[], risk_tolerance and position_size, receive a strategy, actions[], expected_blended_apy and rationale.
+  source_operation: openapi/llama-box-crvusd-yield-optimizer-openapi.yml#simulate_rebalance_api_rebalance_post
+  cost: x402 $0.01 per call, or X-API-Key
+- name: pricing
+  description: The provider's machine-readable x402 price list, free endpoints, wallet and contact.
+  source_operation: openapi/llama-box-crvusd-yield-optimizer-openapi.yml#pricing_api_pricing_get
+  cost: free
+- name: health
+  description: Service health, version and A2A flag.
+  source_operation: openapi/llama-box-crvusd-yield-optimizer-openapi.yml#health_health_get
+  cost: free
+not_mapped:
+- operation: a2a_endpoint_a2a_post
+  reason: The A2A JSON-RPC handler is a protocol surface, not a tool; the four skills it exposes are already the four tools above.
+- operation: a2a_stream_endpoint_a2a_stream_post
+  reason: SSE streaming twin of the above.
+- operation: agent_card__well_known_agent_json_get
+  reason: Discovery document, captured in a2a/.
+- operation: access_log_api_access_log_get
+  reason: Operational log of the last 100 requests including caller IPs; not a tool an agent should be handed.

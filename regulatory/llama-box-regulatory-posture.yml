@@ -1,0 +1,47 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: https://llama.box/
+signals: {}
+summary: >-
+  No horizontal regulatory signal is published anywhere reachable. llama.box has no terms of service, privacy
+  policy, accessibility statement, subprocessor list, DPA, transparency report, SBOM, AI disclosure page or
+  data-residency documentation — every conventional path below returned an empty 404 — and the only legal-ish
+  page found (/pricing) is a "Chado Labs OÜ" bank-transfer checkout template with an all-zeros order number.
+  The provider.url in the agent card (chado.studio) does not resolve. An empty signals map is the
+  measurement; nothing is inferred about which regimes apply.
+probed:
+- {url: 'https://llama.box/terms', status: 404}
+- {url: 'https://llama.box/terms-of-service', status: 404}
+- {url: 'https://llama.box/privacy', status: 404}
+- {url: 'https://llama.box/privacy-policy', status: 404}
+- {url: 'https://llama.box/legal', status: 404}
+- {url: 'https://llama.box/legal/terms', status: 404}
+- {url: 'https://llama.box/legal/privacy', status: 404}
+- {url: 'https://llama.box/accessibility', status: 404}
+- {url: 'https://llama.box/accessibility/vpat', status: 404}
+- {url: 'https://llama.box/legal/subprocessors', status: 404}
+- {url: 'https://llama.box/legal/dpa', status: 404}
+- {url: 'https://llama.box/privacy/requests', status: 404}
+- {url: 'https://llama.box/transparency', status: 404}
+- {url: 'https://llama.box/trust', status: 404}
+- {url: 'https://llama.box/security', status: 404}
+- {url: 'https://llama.box/security/sbom', status: 404}
+- {url: 'https://llama.box/docs/data-residency', status: 404}
+- {url: 'https://llama.box/ai', status: 404}
+- {url: 'https://llama.box/ai/transparency', status: 404}
+- {url: 'https://llama.box/legal/report-content', status: 404}
+- {url: 'https://llama.box/.well-known/security.txt', status: 404}
+- {url: 'https://llama.box/pricing', status: 200, note: '"Chado Labs — Checkout" — a bank-transfer checkout template (Starter, $500/month, beneficiary Chado Labs OÜ, order #000000, placeholder-shaped IBAN). Not a legal page and not this API''s pricing; no pointer emitted.'}
+- {url: 'https://chado.studio/', status: 0, note: 'no DNS A record'}
+already_harvested_artifacts_checked:
+- well-known/llama-box-well-known.yml — no security.txt
+- lifecycle/llama-box-lifecycle.yml — no support period or versioning policy
+- conformance/llama-box-conformance.yml — no compliance program
+- security/ — probe-security-programs.py found no vulnerability-disclosure program and no trust center
+ai_crawler_posture:
+  note: >-
+    Not a regulatory signal in this vocabulary, recorded for completeness: robots.txt explicitly allows
+    GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-User, anthropic-ai, PerplexityBot,
+    Perplexity-User, Google-Extended, Applebot-Extended, Bingbot, CCBot, Amazonbot, meta-externalagent,
+    YandexBot and DuckAssistBot, and points them at /llms.txt.

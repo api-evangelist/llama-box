@@ -1,0 +1,78 @@
+generated: '2026-09-19'
+method: searched
+source: https://llama.box/yo/api/pricing
+derived_from: openapi/llama-box-crvusd-yield-optimizer-openapi.yml
+docs:
+- https://llama.box/yo/docs
+- https://llama.box/yo/.well-known/agent.json
+summary: >-
+  The crvUSD Yield Optimizer's conformance profile is the agent-commerce stack: an A2A 0.2.5 agent card and
+  JSON-RPC 2.0 handler, x402 v2 payment observed live on the wire (HTTP 402 + PAYMENT-REQUIRED header, USDC
+  on Base Sepolia, CAIP-2 eip155:84532), an OpenAPI 3.1.0 contract with offset/limit pagination. It declares
+  no OAuth/OIDC, no RFC 9457 problem details (FastAPI's {"detail": ...} envelope), no RFC 9116 security.txt,
+  no RFC 9727 API catalog and no RFC 8594 sunset signalling. No compliance program or certification is
+  published, so no Compliance pointer is emitted.
+standards:
+- id: openapi-3.1
+  name: OpenAPI 3.1.0
+  conforms: true
+  evidence: openapi/llama-box-crvusd-yield-optimizer-openapi.yml — openapi "3.1.0", 10 operations across 10 paths, every operation carries an operationId and a summary; served live at https://llama.box/yo/openapi.json (200, application/json).
+- id: a2a
+  name: Agent2Agent protocol
+  version: '0.2.5'
+  conforms: true
+  grade: near-conformant
+  evidence: a2a/llama-box-agent-card.json — protocolVersion "0.2.5", capabilities object, skills[] of 4; the /a2a operation description in the OpenAPI names message/send, tasks/get and tasks/cancel; POST https://llama.box/yo/a2a answered 402 rather than a JSON-RPC error, so the RPC responder itself could not be exercised without paying. Graded in a2a/llama-box-a2a.yml.
+  domain_standard_signature: true
+  note: The card's discovery path is the legacy filename under a sub-path and its url is not the RPC endpoint — see the a2a manifest's deviations.
+- id: x402
+  name: x402 HTTP payment protocol
+  version: '2'
+  conforms: true
+  verification: observed
+  evidence: 'POST https://llama.box/yo/a2a (unpaid) -> 402 with PAYMENT-REQUIRED header whose base64 body decodes to {"x402Version":2,"accepts":[{"scheme":"exact","network":"eip155:84532","asset":"0x036CbD53842c5426634e7929541eC2318f3dCF7e","amount":"10000","payTo":"0x6a1175D0EA0e6817786Ce51F1C4F3294F907f410","maxTimeoutSeconds":300,"extra":{"name":"USDC","version":"2"}}]}; the contract states it at $.paths[''/api/pricing''].get.description "pay-per-request via x402 protocol (USDC on Base)".'
+  domain_standard_signature: true
+  note: The "exact" scheme on an EVM network is x402's EIP-3009 transferWithAuthorization flow; the extra {name USDC, version 2} is the token's EIP-712 domain. The settlement network is the Base Sepolia TESTNET, not Base mainnet — see sandbox/.
+- id: caip-2
+  name: CAIP-2 chain identifiers
+  conforms: true
+  evidence: network "eip155:84532" in the x402 challenge and "(eip155:84532)" in /api/pricing.
+- id: json-rpc-2.0
+  conforms: true
+  verification: declared
+  evidence: '$.paths[''/a2a''].post.description — "A2A JSON-RPC 2.0 endpoint" with worked {"jsonrpc":"2.0","method":"message/send",...} examples. Not observed on the wire: the unpaid call is answered by the 402 gate before the RPC layer.'
+- id: sse
+  name: Server-Sent Events streaming
+  conforms: true
+  verification: declared
+  evidence: '$.paths[''/a2a/stream''].post.description — "returns Server-Sent Events stream"; agent card capabilities.streaming true. Gated by 402, not observed.'
+- id: pagination-offset
+  conforms: true
+  evidence: list_pools_api_pools_get parameters limit (1-500, default 100) and offset (>=0); PoolsListResponse.total.
+- id: oauth2
+  conforms: false
+  evidence: No securitySchemes in the contract; /.well-known/oauth-authorization-server and /.well-known/openid-configuration 404.
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration 404.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: 'Errors are FastAPI''s {"detail": ...} — observed 401 {"detail":"Invalid API key"}, 404 {"detail":"Pool not found: doesnotexist"}, 422 {"detail":[{"type":"int_parsing","loc":[...],"msg":...}]}; no application/problem+json, no type URI.'
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: /.well-known/security.txt and /security.txt 404.
+- id: rfc9727-api-catalog
+  conforms: false
+  evidence: /.well-known/api-catalog 404.
+- id: rfc9728-protected-resource-metadata
+  conforms: false
+  evidence: /.well-known/oauth-protected-resource 404 on the host that serves the paid A2A resource.
+- id: rfc8594-sunset
+  conforms: false
+  evidence: No Sunset or Deprecation header declared; no deprecated operations.
+- id: idempotency-key
+  conforms: false
+  evidence: No Idempotency-Key parameter on any operation; see conventions/.
+compliance_program:
+  published: false
+  note: No trust center, certification, SOC 2/ISO 27001 claim, terms of service or privacy policy was found on llama.box (all conventional paths 404). No Compliance pointer.

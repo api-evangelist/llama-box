@@ -1,0 +1,46 @@
+generated: '2026-09-19'
+method: probed
+source: https://llama.box/yo/api/pricing
+docs:
+- https://llama.box/yo/docs
+probed:
+- {url: 'https://llama.box/yo/api/pricing', status: 200, fetched: '2026-09-19'}
+- {url: 'https://llama.box/yo/a2a', method: POST, status: 402, fetched: '2026-09-19', note: 'unpaid; the challenge names the testnet asset and network below'}
+- {url: 'https://llama.box/yo/docs', status: 200, fetched: '2026-09-19', note: 'Swagger UI 5 (swagger-ui-dist@5) with try-it-out against the live service'}
+summary: >-
+  There is no separate test environment and no test-mode key; production is the sandbox. What makes it
+  usable without spending real money is that the ENTIRE payment rail runs on a testnet: /api/pricing states
+  the network as "Base Sepolia testnet (eip155:84532)" and the live x402 challenge settles in testnet USDC
+  (asset 0x036CbD53842c5426634e7929541eC2318f3dCF7e on eip155:84532), so every paid call is exercised with
+  faucet-funded test tokens. Six of the ten operations are free and unauthenticated, and the provider's own
+  Swagger UI at /yo/docs is an interactive console against the live service.
+test_vs_live:
+  separate_environment: false
+  key_prefixes: not published
+  payment_network: Base Sepolia testnet (eip155:84532) — verbatim from /api/pricing "network"
+  payment_asset: '0x036CbD53842c5426634e7929541eC2318f3dCF7e (extra.name "USDC", extra.version "2", from the observed x402 challenge)'
+  pay_to: '0x6a1175D0EA0e6817786Ce51F1C4F3294F907f410 (pricing "wallet" and challenge payTo agree)'
+  note: >-
+    Whether a mainnet rail exists is not published; /api/pricing and the challenge name only the testnet.
+    The OpenAPI's /api/pricing description says "USDC on Base" without qualifying the network; the response
+    body does.
+free_surface:
+  operations: [health_health_get, list_pools_api_pools_get, best_yield_api_best_yield_get, pricing_api_pricing_get, agent_card__well_known_agent_json_get, access_log_api_access_log_get]
+  source: /api/pricing free_endpoints[] (which lists GET /docs as well; GET /api/access-log is free per its own description "No authentication required").
+  note: Enough to discover pools and pool_ids for the paid risk and rebalance calls without paying anything.
+console:
+  swagger_ui: https://llama.box/yo/docs
+  redoc: https://llama.box/yo/redoc
+  note: Provider-served. Try-it-out hits the live service; paid operations return 402 from the console too.
+worked_examples_published:
+- operation: simulate_rebalance_api_rebalance_post
+  source: the operation's own description in the OpenAPI
+  body: '{"current_allocation":[{"pool_address":"0x0655977FEb2f289A4aB78af67BAB0d17aAb84367","chain":"ethereum","amount_usd":5000}],"risk_tolerance":"medium","position_size":10000}'
+- operation: risk_score_api_risk_score__pool_id__get
+  source: agent card skills[risk-score].examples
+  example: 'Risk score for pool 0x0655977FEb2f289A4aB78af67BAB0d17aAb84367'
+- operation: list_pools_api_pools_get
+  source: the operation's own description
+  examples: ['/api/pools?chain=ethereum&source=llamalend&min_apy=5', '/api/pools?risk=low&sort_by=tvl&order=desc', '/api/pools?min_tvl=100000&limit=10']
+test_clocks: none
+fixtures: none beyond the examples above

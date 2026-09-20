@@ -1,0 +1,30 @@
+generated: '2026-09-19'
+method: probed
+source: https://llama.box/yo/openapi.json
+docs:
+- https://llama.box/yo/docs
+- https://llama.box/yo/api/pricing
+limit_count: 0
+summary: >-
+  No request-rate limit is published and none is signalled. The OpenAPI declares no 429 on any operation
+  and no rate-limit headers; live unauthenticated 200s on /health, /api/pools, /api/best-yield and
+  /api/access-log carried no X-RateLimit-*, RateLimit-* or Retry-After header; /api/pricing says nothing
+  about throttling. What the contract does publish are per-request SIZE bounds and the x402 payment window,
+  recorded below as limits on shape and time rather than on rate. Metering on the paid surface is economic
+  — every call to the four priced endpoints is paid individually — which is the provider's throttle.
+rate_limits: []
+observed_headers:
+  requests: ['GET https://llama.box/yo/health', 'GET https://llama.box/yo/api/pools?limit=2', 'GET https://llama.box/yo/api/best-yield?top=1', 'GET https://llama.box/yo/api/access-log?limit=3']
+  fetched: '2026-09-19'
+  rate_limit_headers: none
+  other_headers: [alt-svc, content-type, date, server: uvicorn, via: 1.1 Caddy, content-length]
+  exhaustion_status: none observed
+size_and_time_limits:
+- {name: /api/pools page size, param: limit, limit: '1-500 (default 100)', exhaustion_status: 422, source: openapi list_pools_api_pools_get}
+- {name: /api/best-yield top-N, param: top, limit: '1-50 (default 5)', exhaustion_status: 422, source: openapi best_yield_api_best_yield_get}
+- {name: /api/access-log entries, param: limit, limit: '1-100 (default 100); the buffer holds the last 100 requests', exhaustion_status: 422, source: openapi access_log_api_access_log_get}
+- {name: x402 payment window, limit: 'maxTimeoutSeconds 300', source: 'observed PAYMENT-REQUIRED challenge on POST /yo/a2a', note: 'The signed payment must be presented within 300 s of the challenge.'}
+exhaustion:
+  status: null
+  headers: []
+  note: Undocumented. An honest zero.

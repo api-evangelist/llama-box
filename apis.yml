@@ -1,23 +1,151 @@
 aid: llama-box
 name: Chado Studio
-description: 'Chado Studio is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Chado Studio (contact api@chado.studio) operates llama.box, a desktop-style hub for the Curve Finance
+  ecosystem — dashboards, analytics and curated links for Curve, crvUSD, LlamaLend, YieldBasis, Convex,
+  Stake DAO, Yearn and Resupply. Its one machine-readable surface is the crvUSD Yield Optimizer, a FastAPI
+  service mounted at https://llama.box/yo that discovers crvUSD yield across scrvUSD, LlamaLend, Convex and
+  StakeDAO on Ethereum, Arbitrum, Base, Optimism and Fraxtal, scores pool risk 0-100 and simulates
+  rebalances. It publishes an OpenAPI 3.1.0 contract (10 operations) at /yo/openapi.json with Swagger UI and
+  ReDoc, an A2A 0.2.5 agent card at /yo/.well-known/agent.json declaring four skills, and charges for the
+  risk, rebalance and A2A calls per request through the x402 protocol in USDC on the Base Sepolia testnet.
+  The hub itself serves an llms.txt and a robots.txt that allows every major AI crawler.
 url: https://raw.githubusercontent.com/api-evangelist/llama-box/refs/heads/main/apis.yml
+image: https://llama.box/og-cover.png
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-09-19 (local-v3; was a2a-registry harvest stub)
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
-- Company
-apis: []
+- Agents
+- A2A
+- x402
+- DeFi
+- Yield
+- Curve Finance
+- crvUSD
+- Stablecoins
+- Risk Scoring
+- Analytics
+- agent-native
+tags_raw:
+- Agents
+- A2A
+- x402
+- DeFi
+- Yield
+- Curve Finance
+- crvUSD
+- Stablecoins
+- Risk scoring
+- Analytics
+- Agent-native
+apis:
+- aid: llama-box:crvusd-yield-optimizer-api
+  name: crvUSD Yield Optimizer API
+  description: >-
+    REST contract for the crvUSD Yield Optimizer (OpenAPI 3.1.0, info.version 1.1.0, servers[] "/yo" on
+    llama.box). Free, unauthenticated reads list and filter crvUSD yield pools across chains and sources
+    (offset/limit pagination, up to 500 per page) and return the top-N pools by APY; a per-pool risk score
+    (0-100) and a portfolio rebalance simulation are paid per request via x402 ($0.005 and $0.01 in USDC on
+    Base Sepolia), or unlocked by an optional X-API-Key. Also exposes the A2A JSON-RPC endpoint, an SSE
+    streaming twin, a machine-readable pricing document, a public in-memory access log and a health check.
+    Swagger UI at /yo/docs and ReDoc at /yo/redoc are the provider's own renders of the same contract.
+  image: https://llama.box/og-cover.png
+  humanURL: https://llama.box/yo/docs
+  baseURL: https://llama.box/yo
+  tags:
+  - DeFi
+  - Yield
+  - crvUSD
+  - Risk Scoring
+  - x402
+  properties:
+  - type: OpenAPI
+    url: openapi/llama-box-crvusd-yield-optimizer-openapi.yml
+  - type: OpenAPI
+    name: crvUSD Yield Optimizer API OpenAPI (provider-hosted)
+    url: https://llama.box/yo/openapi.json
+  - type: APIReference
+    url: https://llama.box/yo/docs
+  - type: Documentation
+    url: https://llama.box/yo/redoc
+  - type: Overlay
+    url: overlays/llama-box-crvusd-yield-optimizer-overlay.yaml
+- aid: llama-box:crvusd-yield-optimizer-a2a-agent
+  name: crvUSD Yield Optimizer A2A Agent
+  description: >-
+    Agent2Agent surface of the same service: an agent card at https://llama.box/yo/.well-known/agent.json
+    (protocolVersion 0.2.5, version 1.1.0, provider "Chado Studio") declaring four skills — Best Yield
+    Finder, Pool Discovery, Risk Assessment and Rebalance Advisor — that accept natural-language or
+    structured DataPart input. The JSON-RPC 2.0 handler is POST https://llama.box/yo/a2a (message/send,
+    tasks/get, tasks/cancel, plus legacy SendMessage/GetTask/CancelTask/ListTasks aliases) with an SSE
+    message/stream twin at /yo/a2a/stream; both answered an unpaid probe with HTTP 402 and an x402 v2
+    PAYMENT-REQUIRED challenge for $0.01 USDC on Base Sepolia (eip155:84532). The card's own url
+    (https://llama.box/yo) is not the RPC endpoint and 404s on GET and POST.
+  image: https://llama.box/og-cover.png
+  humanURL: https://llama.box/yo/docs
+  baseURL: https://llama.box/yo/a2a
+  tags:
+  - A2A
+  - Agents
+  - agent-native
+  - x402
+  properties:
+  - type: AgentCard
+    url: a2a/llama-box-a2a.yml
+  - type: AgentCard
+    name: A2A Agent Card (provider-hosted, legacy path under /yo)
+    url: https://llama.box/yo/.well-known/agent.json
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/llama-box-agentic-access.yml
+- type: DomainSecurity
+  url: security/llama-box-domain-security.yml
 - type: Website
   url: https://llama.box/
+- type: Documentation
+  url: https://llama.box/yo/redoc
+- type: APIReference
+  url: https://llama.box/yo/docs
+- type: Pricing
+  url: https://llama.box/yo/api/pricing
+- type: AgentCard
+  url: a2a/llama-box-a2a.yml
+- type: WellKnown
+  url: well-known/llama-box-well-known.yml
+- type: LLMsTxt
+  url: llms/llama-box-llms.txt
+- type: Authentication
+  url: authentication/llama-box-authentication.yml
+- type: Conventions
+  url: conventions/llama-box-conventions.yml
+- type: ErrorCatalog
+  url: errors/llama-box-problem-types.yml
+- type: DataModel
+  url: data-model/llama-box-data-model.yml
+- type: RateLimits
+  url: rate-limits/llama-box-rate-limits.yml
+- type: Plans
+  url: plans/llama-box-plans-pricing.yml
+- type: Sandbox
+  url: sandbox/llama-box-sandbox.yml
+- type: Conformance
+  url: conformance/llama-box-conformance.yml
+- type: Lifecycle
+  url: lifecycle/llama-box-lifecycle.yml
+- type: AgentSkill
+  url: skills/_index.yml
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 26
+  pass: local-v3

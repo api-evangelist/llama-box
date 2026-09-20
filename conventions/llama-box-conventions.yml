@@ -1,0 +1,136 @@
+generated: '2026-09-19'
+method: searched
+source: https://llama.box/yo/openapi.json
+derived_from: openapi/llama-box-crvusd-yield-optimizer-openapi.yml
+docs:
+- https://llama.box/yo/docs
+- https://llama.box/yo/api/pricing
+base_url: https://llama.box/yo
+media_type: application/json
+auth:
+  style: >-
+    Two gates, neither a securityScheme: an optional X-API-Key header parameter that the service validates
+    (401 on a bad key) and that unlocks the paid operations for an unpublished "pro or enterprise tier"; and
+    x402 payment — a paid operation called without a key answers 402 with a PAYMENT-REQUIRED header and is
+    retried with an X-PAYMENT header. Six operations are free and need neither.
+  detail: authentication/llama-box-authentication.yml
+idempotency:
+  supported: false
+  coverage: none
+  mechanism: null
+  header: null
+  scope: []
+  retention: undocumented
+  description: >-
+    No Idempotency-Key header, parameter or body field exists on any operation and no retry guidance is
+    published. The mutating surface is small: POST /a2a (message/send creates a task, per the operation
+    description), POST /a2a/stream, and POST /api/rebalance — which despite the verb is a pure simulation
+    ("Simulate rebalance: accept current allocation, suggest optimal") and moves nothing. The only replay
+    consideration is economic: each paid request is settled per call via x402 (challenge maxTimeoutSeconds
+    300), so a retried paid call that succeeded the first time is paid twice. The x402 payment authorization
+    itself is single-use by construction of the "exact" scheme, but that protects the payer from double
+    settlement of ONE signature, not from re-sending a second one.
+  gaps:
+  - No idempotency key on POST /a2a, the one operation that creates server-side state (a task).
+  - No documented safe-retry guidance for an ambiguous outcome (timeout after a paid call).
+dry_run_mode:
+  supported: false
+  status: not-applicable-for-most-of-the-surface
+  note: >-
+    The API is advisory: it never executes a trade, deposit or rebalance on-chain. POST /api/rebalance IS the
+    rehearsal (a simulation that returns a strategy and actions[] for a human or agent to act on elsewhere),
+    so there is nothing further to dry-run. The two free reads (/api/pools, /api/best-yield) let an agent
+    obtain pool_ids and preview candidates before paying for a risk score or a simulation. No free twin of
+    the paid calls exists.
+reversibility:
+  grade: documented
+  docs: https://llama.box/yo/openapi.json
+  note: >-
+    A reversal path exists for the one state-creating operation — tasks/cancel on the A2A endpoint — but no
+    window inside which it works is stated, so the grade is documented (0.4), not verified. No API operation
+    here moves funds, so there is no financial action to reverse beyond the x402 payment itself, for which
+    no refund path is published. Nothing below asserts a window the provider has not written down.
+  write_surfaces:
+  - operation: a2a_endpoint_a2a_post (message/send)
+    action: Create a task for the agent (natural-language or structured skill request)
+    reversal: tasks/cancel
+    reversal_operation: 'a2a_endpoint_a2a_post with method tasks/cancel (also the legacy alias CancelTask)'
+    window: null
+    stated_terms:
+    - source: $.paths['/a2a'].post.description
+      verbatim: 'tasks/cancel: Cancel a running task'
+    grade: documented
+    note: Only "running" tasks are named as cancellable; no duration, retention or refund statement accompanies it.
+  - operation: a2a_stream_endpoint_a2a_stream_post (message/stream)
+    action: Same as above, streamed over SSE
+    reversal: tasks/cancel (via /a2a)
+    window: null
+    grade: documented
+  - operation: simulate_rebalance_api_rebalance_post
+    action: Compute a recommended allocation
+    reversal: na
+    window: null
+    grade: na
+    note: A simulation with no side effect; nothing to reverse.
+  - operation: x402 payment on any paid call
+    action: Settle $0.005-$0.01 USDC (Base Sepolia testnet) to 0x6a1175D0EA0e6817786Ce51F1C4F3294F907f410
+    reversal: none documented
+    window: null
+    grade: none
+    note: No refund or dispute path is published; the only contact is api@chado.studio. On the testnet the value at risk is faucet USDC.
+pagination:
+  style: offset
+  operations: [list_pools_api_pools_get]
+  params: {limit: 'integer 1-500, default 100', offset: 'integer >= 0, default 0'}
+  response_fields: {items: pools, total: total, filters_applied: filters_applied}
+  sorting: {param: sort_by, values: [apy, tvl, risk, name], default: apy, order_param: order, order_values: [asc, desc], default_order: desc}
+  note: best_yield_api_best_yield_get is top-N (top 1-50, default 5) with no cursor; access_log_api_access_log_get is last-N (limit 1-100).
+filtering:
+  list_pools: {chain: [ethereum, arbitrum, optimism, fraxtal], source: [scrvusd, llamalend, boosted_lp, crvusd_mint], risk: [low, medium, high], min_apy: number, min_tvl: number USD}
+  note: Enumerations are quoted from parameter descriptions; the schemas type them as free strings. The OpenAPI info.description also names Base as a chain; the chain parameter description does not.
+identifiers:
+  pool_id: 12-character hash from /api/pools (e.g. 41145f0265d9), or the pool's 0x address — both accepted by risk_score_api_risk_score__pool_id__get (verbatim from its description).
+  note: Observed pool addresses are Ethereum 0x addresses for LlamaLend pools and UUID-shaped strings for Convex "boosted_lp" entries (e.g. fab4c4b9-3f48-4822-9d75-09b3f114a5f5).
+field_expansion: none
+metadata: none
+request_tracing:
+  request_id_header: none
+  note: No request id, correlation or trace header on any response; the public /api/access-log records method, path, query, client_ip, status_code and response_time_ms per request instead.
+versioning:
+  scheme: unversioned paths
+  current: 1.1.0
+  detail: lifecycle/llama-box-lifecycle.yml
+error_envelope:
+  shape: '{"detail": string | ValidationError[]}'
+  format: fastapi-detail (not RFC 9457)
+  detail: errors/llama-box-problem-types.yml
+rate_limit_signaling:
+  headers: none observed
+  exhaustion_status: none declared or observed
+  detail: rate-limits/llama-box-rate-limits.yml
+payment:
+  protocol: x402
+  version: 2
+  challenge_header: PAYMENT-REQUIRED (base64 JSON)
+  payment_header: X-PAYMENT (per /api/pricing how_it_works)
+  scheme: exact
+  network: eip155:84532 (Base Sepolia testnet)
+  asset: '0x036CbD53842c5426634e7929541eC2318f3dCF7e (USDC, EIP-712 domain version 2)'
+  pay_to: '0x6a1175D0EA0e6817786Ce51F1C4F3294F907f410'
+  max_timeout_seconds: 300
+  prices: {'GET /api/risk-score/{pool_id}': '$0.005', 'POST /api/rebalance': '$0.01', 'POST /a2a': '$0.01', 'POST /a2a/stream': '$0.01'}
+  price_source: https://llama.box/yo/api/pricing
+streaming:
+  operation: a2a_stream_endpoint_a2a_stream_post
+  transport: Server-Sent Events
+  note: Declared in the contract and the card (capabilities.streaming true); gated by 402, not observed.
+observed_latency:
+  note: 'Cold GET /api/pools took 4.5 s (response_time_ms 4535.76 in the access log); the immediately following /api/best-yield took 0.82 ms — the pool set is cached after first fetch.'
+cross_links:
+  authentication: authentication/llama-box-authentication.yml
+  errors: errors/llama-box-problem-types.yml
+  lifecycle: lifecycle/llama-box-lifecycle.yml
+  rate_limits: rate-limits/llama-box-rate-limits.yml
+  plans: plans/llama-box-plans-pricing.yml
+  sandbox: sandbox/llama-box-sandbox.yml
+  a2a: a2a/llama-box-a2a.yml

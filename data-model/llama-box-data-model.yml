@@ -1,0 +1,94 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/llama-box-crvusd-yield-optimizer-openapi.yml
+id_format: 'pool_id: 12-character hex hash derived by the service from the pool (e.g. 41145f0265d9); address: the underlying protocol identifier — an EVM 0x address for LlamaLend/scrvUSD pools, a UUID for Convex boosted_lp entries (observed live)'
+summary: >-
+  A small read-mostly model: Pool is the only persistent entity, sourced from four DeFi protocols across
+  five chains; RiskScore is a computed view of one Pool; a Rebalance is a request/response pair that
+  references Pools by address and chain and returns per-pool actions. Nothing is created or owned by the
+  caller except an A2A task, whose shape the contract does not define (the /a2a operation has no request or
+  response schema).
+entities:
+- name: Pool
+  schema: PoolResponse
+  root: true
+  id: pool_id
+  alternate_id: address
+  fields: [pool_id, name, address, apy, tvl, source, chain, risk, base_apy, reward_apy, gas_cost_usd, extra]
+  enums:
+    source: [scrvusd, llamalend, boosted_lp, crvusd_mint]
+    chain: [ethereum, arbitrum, optimism, fraxtal, base (info.description only)]
+    risk: [low, medium, high]
+  notes: extra is an open object; observed keys include borrow_apy, n_loans, utilization, borrowed_token, collateral_token (LlamaLend) and platform, project, reward_tokens, il_risk (Convex).
+  returned_by: ['list_pools_api_pools_get (PoolsListResponse.pools[])', 'best_yield_api_best_yield_get (BestYieldResponse.pools[])']
+- name: PoolsList
+  schema: PoolsListResponse
+  fields: [pools, total, filters_applied]
+  notes: Offset-paginated envelope; total is the unfiltered-by-page count.
+- name: BestYield
+  schema: BestYieldResponse
+  fields: [pools, count, chain_filter]
+- name: RiskScore
+  schema: RiskScoreResponse
+  id: pool_id
+  fields: [pool_id, pool_name, address, chain, source, risk_level, risk_score, factors, recommendation]
+  notes: 'risk_score is an integer 0-100, "higher = riskier"; factors[] are strings. Paid (x402 $0.005).'
+  returned_by: [risk_score_api_risk_score__pool_id__get]
+- name: AllocationItem
+  schema: AllocationItem
+  fields: [pool_address, chain, amount_usd]
+  required: [pool_address, amount_usd]
+  notes: Caller-supplied position; chain defaults to ethereum.
+- name: RebalanceRequest
+  schema: RebalanceRequest
+  fields: [current_allocation, risk_tolerance, position_size]
+  required: [current_allocation]
+  notes: 'risk_tolerance defaults to "high" in the schema while the worked example uses "medium"; position_size defaults to 10000.'
+- name: RebalanceAction
+  schema: RebalanceAction
+  fields: [action, pool_name, pool_address, chain, current_amount_usd, suggested_amount_usd, apy, reason]
+  required: [action, pool_name, pool_address, chain]
+- name: RebalanceResponse
+  schema: RebalanceResponse
+  fields: [strategy, actions, current_total_usd, expected_blended_apy, rationale]
+  notes: Paid (x402 $0.01). Advisory only — no on-chain action is taken.
+- name: ValidationError
+  schema: ValidationError
+  fields: [loc, msg, type, input, ctx]
+  notes: Wrapped in HTTPValidationError.detail[] on 422.
+- name: A2ATask
+  schema: null
+  notes: Created by message/send on POST /a2a and addressed by tasks/get and tasks/cancel; the contract gives the operation no request or response schema, so the task shape is defined by A2A 0.2.5, not by this document.
+relationships:
+- from: PoolsList
+  type: has_many
+  to: Pool
+  via: pools
+- from: BestYield
+  type: has_many
+  to: Pool
+  via: pools
+- from: RiskScore
+  type: belongs_to
+  to: Pool
+  via: pool_id (or address)
+- from: RebalanceRequest
+  type: has_many
+  to: AllocationItem
+  via: current_allocation
+- from: AllocationItem
+  type: belongs_to
+  to: Pool
+  via: pool_address + chain
+- from: RebalanceResponse
+  type: has_many
+  to: RebalanceAction
+  via: actions
+- from: RebalanceAction
+  type: belongs_to
+  to: Pool
+  via: pool_address + chain
+- from: HTTPValidationError
+  type: has_many
+  to: ValidationError
+  via: detail

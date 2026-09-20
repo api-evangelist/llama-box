@@ -1,0 +1,58 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the crvUSD Yield Optimizer API
+  version: 1.0.0
+extends: ../openapi/llama-box-crvusd-yield-optimizer-openapi.yml
+x-generated: '2026-09-19'
+x-method: generated
+x-source: >-
+  Generated from openapi/llama-box-crvusd-yield-optimizer-openapi.yml plus the probed artifacts in this repo
+  (a2a/, authentication/, plans/, errors/). Captures API Evangelist annotations without mutating the
+  provider's contract. Every operationId targeted below exists verbatim in the provider's spec.
+actions:
+- target: $.info
+  description: Link the provider's other machine-readable surfaces and its payment model from the contract.
+  update:
+    x-agent-card: https://llama.box/yo/.well-known/agent.json
+    x-a2a-endpoint: https://llama.box/yo/a2a
+    x-pricing: https://llama.box/yo/api/pricing
+    x-payment-protocol: x402 v2, USDC on Base Sepolia (eip155:84532), per request
+    x-contact: api@chado.studio
+    x-apievangelist-provider: llama-box
+- target: $.servers[0]
+  description: The provider publishes a relative server URL ("/yo"); record the absolute base it resolves to on the host that serves the contract.
+  update:
+    description: Resolves to https://llama.box/yo — the FastAPI app is mounted under /yo on llama.box behind Caddy.
+    x-resolved-url: https://llama.box/yo
+- target: $.paths['/api/risk-score/{pool_id}'].get
+  description: Paid operation — undocumented 402 in the contract; price from /api/pricing.
+  update:
+    x-x402-price: '$0.005'
+    x-observed-responses: [401 Invalid API key, 402 Payment required (x402 challenge in PAYMENT-REQUIRED header), 404 Pool not found]
+- target: $.paths['/api/rebalance'].post
+  update:
+    x-x402-price: '$0.01'
+    x-observed-responses: [401 Invalid API key, 402 Payment required (x402 challenge in PAYMENT-REQUIRED header)]
+- target: $.paths['/a2a'].post
+  update:
+    x-x402-price: '$0.01'
+    x-protocol: A2A JSON-RPC 2.0 (protocolVersion 0.2.5 per the agent card)
+    x-observed-responses: [402 Payment required (x402 challenge in PAYMENT-REQUIRED header)]
+- target: $.paths['/a2a/stream'].post
+  update:
+    x-x402-price: '$0.01'
+    x-protocol: A2A message/stream over Server-Sent Events
+    x-observed-responses: [402 Payment required]
+- target: $.paths['/api/pools'].get
+  update:
+    x-free: true
+    x-pagination: {style: offset, params: [limit, offset], max_limit: 500, total_field: total}
+- target: $.paths['/api/best-yield'].get
+  update:
+    x-free: true
+- target: $.paths['/api/access-log'].get
+  update:
+    x-note: Public, unauthenticated log of the last 100 requests including client_ip, path, status and latency. Treat as sensitive operational data.
+- target: $.paths['/.well-known/agent.json'].get
+  update:
+    x-note: A2A agent card served at the legacy filename under the /yo mount; graded near-conformant in a2a/llama-box-a2a.yml.

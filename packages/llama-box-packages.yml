@@ -1,0 +1,20 @@
+generated: '2026-09-19'
+method: searched
+source: registry and code-host searches 2026-09-19
+package_count: 0
+packages: []
+searched:
+- {registry: npm, query: 'https://registry.npmjs.org/llama-box', status: 404}
+- {registry: npm, query: 'https://registry.npmjs.org/@llama-box%2Fsdk', status: 404}
+- {registry: pypi, query: 'https://pypi.org/pypi/llama-box/json', status: 404}
+- {registry: github-users, query: 'https://api.github.com/users/{chadostudio,chado-studio,chado_studio,ChadoStudio}', status: 404}
+- {registry: github-search, query: 'https://api.github.com/search/repositories?q="chado studio"', result: 0 repositories}
+- {registry: github-search, query: 'https://api.github.com/search/repositories?q=crvusd+yield+optimizer+a2a', result: 0 repositories}
+- {registry: github-search, query: 'https://api.github.com/search/repositories?q=llama.box', result: 'thousands of unrelated llama.cpp / LLM repositories; none is this provider (the name collides with the LLM ecosystem)'}
+- {source: llms.txt, query: 'https://llama.box/llms.txt', result: 'links to github.com/curvefi (Curve Finance, a third party) and github.com/phil-svg (Telegram bot author, third party); no first-party repository'}
+- {source: openapi + agent card + Swagger UI, result: 'no SDK, client library, CLI or repository referenced'}
+note: >-
+  Chado Studio publishes no client library, CLI, SDK or source repository for the crvUSD Yield Optimizer in
+  any registry or code host searched; the documented way in is raw HTTP (OpenAPI) or A2A JSON-RPC. The
+  service's own access log names a server path /home/ubuntu/Projects/chado-yield-optimizer/, which is a
+  private deployment path, not a published package. No Packages or SDKs pointer is emitted.

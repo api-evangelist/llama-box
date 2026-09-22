@@ -2,23 +2,21 @@
 kin_checks:
   slug: llama-box
   schema_version: 0.22.0
-  scored_at: '2026-09-19'
-  run_ts: 2026-09-19T193153
+  scored_at: '2026-09-21'
+  run_ts: 2026-09-21T233935
   note: Actionable checks (missed + partial) in `checks`, plus the ids that did not
     apply in `na`. Everything else in rubric/scoring-0.22.0.yml was earned; counts
     below let you verify that.
   counts:
     total: 136
-    earned: 35
-    partial: 4
+    earned: 33
+    partial: 6
     missed: 71
     na: 26
   checks:
   - id: multiple_apis
     status: missed
   - id: well_known_published
-    status: missed
-  - id: llms_txt_published
     status: missed
   - id: apis_json_self_hosted
     status: missed
@@ -143,6 +141,8 @@ kin_checks:
     status: missed
   - id: reversibility_documented
     status: missed
+  - id: mcp_server
+    status: missed
   - id: idempotency
     status: missed
   - id: openapi_examples
@@ -163,10 +163,13 @@ kin_checks:
     status: missed
   - id: agentic_commerce
     status: missed
-  - id: mcp_server
+  - id: agent_skill_present
     status: partial
-    earned: 4.8
-    detail: 'grade: documented'
+    earned: 0.75
+  - id: agentic_access
+    status: partial
+    earned: 2.5
+    detail: 'authorship: derived'
   - id: auth_clarity
     status: partial
     earned: 3.5
@@ -175,6 +178,10 @@ kin_checks:
     status: partial
     earned: 3.5
     detail: 'grade: documented'
+  - id: agent_skills
+    status: partial
+    earned: 1.25
+    detail: 'authorship: derived'
   - id: agent_card
     status: partial
     earned: 4.8

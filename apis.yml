@@ -30,7 +30,7 @@ tags:
 - Stablecoins
 - Risk Scoring
 - Analytics
-- agent-native
+- Agent-Native
 tags_raw:
 - Agents
 - A2A
@@ -43,53 +43,28 @@ tags_raw:
 - Risk scoring
 - Analytics
 - Agent-native
+- agent-native
 apis:
-- aid: llama-box:crvusd-yield-optimizer-api
-  name: crvUSD Yield Optimizer API
-  description: >-
-    REST contract for the crvUSD Yield Optimizer (OpenAPI 3.1.0, info.version 1.1.0, servers[] "/yo" on
-    llama.box). Free, unauthenticated reads list and filter crvUSD yield pools across chains and sources
-    (offset/limit pagination, up to 500 per page) and return the top-N pools by APY; a per-pool risk score
-    (0-100) and a portfolio rebalance simulation are paid per request via x402 ($0.005 and $0.01 in USDC on
-    Base Sepolia), or unlocked by an optional X-API-Key. Also exposes the A2A JSON-RPC endpoint, an SSE
-    streaming twin, a machine-readable pricing document, a public in-memory access log and a health check.
-    Swagger UI at /yo/docs and ReDoc at /yo/redoc are the provider's own renders of the same contract.
-  image: https://llama.box/og-cover.png
-  humanURL: https://llama.box/yo/docs
-  baseURL: https://llama.box/yo
-  tags:
-  - DeFi
-  - Yield
-  - crvUSD
-  - Risk Scoring
-  - x402
-  properties:
-  - type: OpenAPI
-    url: openapi/llama-box-crvusd-yield-optimizer-openapi.yml
-  - type: OpenAPI
-    name: crvUSD Yield Optimizer API OpenAPI (provider-hosted)
-    url: https://llama.box/yo/openapi.json
-  - type: APIReference
-    url: https://llama.box/yo/docs
-  - type: Documentation
-    url: https://llama.box/yo/redoc
-  - type: Overlay
-    url: overlays/llama-box-crvusd-yield-optimizer-overlay.yaml
 - aid: llama-box:crvusd-yield-optimizer-a2a-agent
   name: crvUSD Yield Optimizer A2A Agent
   description: >-
     Agent2Agent surface of the same service: an agent card at https://llama.box/yo/.well-known/agent.json
     (protocolVersion 0.2.5, version 1.1.0, provider "Chado Studio") declaring four skills — Best Yield
-    Finder, Pool Discovery, Risk Assessment and Rebalance Advisor — that accept natural-language or
-    structured DataPart input. The JSON-RPC 2.0 handler is POST https://llama.box/yo/a2a (message/send,
-    tasks/get, tasks/cancel, plus legacy SendMessage/GetTask/CancelTask/ListTasks aliases) with an SSE
-    message/stream twin at /yo/a2a/stream; both answered an unpaid probe with HTTP 402 and an x402 v2
-    PAYMENT-REQUIRED challenge for $0.01 USDC on Base Sepolia (eip155:84532). The card's own url
-    (https://llama.box/yo) is not the RPC endpoint and 404s on GET and POST.
+    Finder, Pool Discovery, Risk Assessment and Rebalance Advisor — that accept natural-language or structured
+    DataPart input. The JSON-RPC 2.0 handler is POST https://llama.box/yo/a2a (message/send, tasks/get,
+    tasks/cancel, plus legacy SendMessage/GetTask/CancelTask/ListTasks aliases) with an SSE message/stream
+    twin at /yo/a2a/stream; both answered an unpaid probe with HTTP 402 and an x402 v2 PAYMENT-REQUIRED
+    challenge for $0.01 USDC on Base Sepolia (eip155:84532). The card's own url (https://llama.box/yo)
+    is not the RPC endpoint and 404s on GET and POST.
   image: https://llama.box/og-cover.png
   humanURL: https://llama.box/yo/docs
   baseURL: https://llama.box/yo/a2a
   tags:
+  - A2A
+  - Agents
+  - Agent-Native
+  - x402
+  tags_raw:
   - A2A
   - Agents
   - agent-native
@@ -100,12 +75,140 @@ apis:
   - type: AgentCard
     name: A2A Agent Card (provider-hosted, legacy path under /yo)
     url: https://llama.box/yo/.well-known/agent.json
+- aid: llama-box:llama-box-a2a-api
+  name: Chado Studio A2a API
+  description: The A2a API from Chado Studio — 2 operation(s) for a2a.
+  humanURL: https://llama.box/yo/docs
+  baseURL: https://llama.box/yo
+  tags:
+  - A2a
+  properties:
+  - type: OpenAPI
+    url: openapi/llama-box-a2a-api-openapi.yml
+  - type: APIReference
+    url: https://llama.box/yo/docs
+  - type: Documentation
+    url: https://llama.box/yo/redoc
+- aid: llama-box:llama-box-access-log-api
+  name: Chado Studio Access Log API
+  description: The Access Log API from Chado Studio — 1 operation(s) for access log.
+  humanURL: https://llama.box/yo/docs
+  baseURL: https://llama.box/yo
+  tags:
+  - Access Log
+  properties:
+  - type: OpenAPI
+    url: openapi/llama-box-access-log-api-openapi.yml
+  - type: APIReference
+    url: https://llama.box/yo/docs
+  - type: Documentation
+    url: https://llama.box/yo/redoc
+- aid: llama-box:llama-box-best-yield-api
+  name: Chado Studio Best Yield API
+  description: The Best Yield API from Chado Studio — 1 operation(s) for best yield.
+  humanURL: https://llama.box/yo/docs
+  baseURL: https://llama.box/yo
+  tags:
+  - Best Yield
+  properties:
+  - type: OpenAPI
+    url: openapi/llama-box-best-yield-api-openapi.yml
+  - type: APIReference
+    url: https://llama.box/yo/docs
+  - type: Documentation
+    url: https://llama.box/yo/redoc
+- aid: llama-box:llama-box-health-api
+  name: Chado Studio Health API
+  description: The Health API from Chado Studio — 1 operation(s) for health.
+  humanURL: https://llama.box/yo/docs
+  baseURL: https://llama.box/yo
+  tags:
+  - Health
+  properties:
+  - type: OpenAPI
+    url: openapi/llama-box-health-api-openapi.yml
+  - type: APIReference
+    url: https://llama.box/yo/docs
+  - type: Documentation
+    url: https://llama.box/yo/redoc
+- aid: llama-box:llama-box-pools-api
+  name: Chado Studio Pools API
+  description: The Pools API from Chado Studio — 1 operation(s) for pools.
+  humanURL: https://llama.box/yo/docs
+  baseURL: https://llama.box/yo
+  tags:
+  - Pools
+  properties:
+  - type: OpenAPI
+    url: openapi/llama-box-pools-api-openapi.yml
+  - type: APIReference
+    url: https://llama.box/yo/docs
+  - type: Documentation
+    url: https://llama.box/yo/redoc
+- aid: llama-box:llama-box-pricing-api
+  name: Chado Studio Pricing API
+  description: The Pricing API from Chado Studio — 1 operation(s) for pricing.
+  humanURL: https://llama.box/yo/docs
+  baseURL: https://llama.box/yo
+  tags:
+  - Pricing
+  properties:
+  - type: OpenAPI
+    url: openapi/llama-box-pricing-api-openapi.yml
+  - type: APIReference
+    url: https://llama.box/yo/docs
+  - type: Documentation
+    url: https://llama.box/yo/redoc
+- aid: llama-box:llama-box-rebalance-api
+  name: Chado Studio Rebalance API
+  description: The Rebalance API from Chado Studio — 1 operation(s) for rebalance.
+  humanURL: https://llama.box/yo/docs
+  baseURL: https://llama.box/yo
+  tags:
+  - Rebalance
+  properties:
+  - type: OpenAPI
+    url: openapi/llama-box-rebalance-api-openapi.yml
+  - type: APIReference
+    url: https://llama.box/yo/docs
+  - type: Documentation
+    url: https://llama.box/yo/redoc
+- aid: llama-box:llama-box-risk-score-api
+  name: Chado Studio Risk Score API
+  description: The Risk Score API from Chado Studio — 1 operation(s) for risk score.
+  humanURL: https://llama.box/yo/docs
+  baseURL: https://llama.box/yo
+  tags:
+  - Risk Score
+  properties:
+  - type: OpenAPI
+    url: openapi/llama-box-risk-score-api-openapi.yml
+  - type: APIReference
+    url: https://llama.box/yo/docs
+  - type: Documentation
+    url: https://llama.box/yo/redoc
+- aid: llama-box:llama-box-well-known-api
+  name: Chado Studio .well Known API
+  description: The .well Known API from Chado Studio — 1 operation(s) for .well known.
+  humanURL: https://llama.box/yo/docs
+  baseURL: https://llama.box/yo
+  tags:
+  - .well Known
+  properties:
+  - type: OpenAPI
+    url: openapi/llama-box-well-known-api-openapi.yml
+  - type: APIReference
+    url: https://llama.box/yo/docs
+  - type: Documentation
+    url: https://llama.box/yo/redoc
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/llama-box-crvusd-yield-optimizer-overlay.yaml
 - type: AgenticAccess
   url: agentic-access/llama-box-agentic-access.yml
 - type: DomainSecurity
@@ -149,3 +252,10 @@ x-enrichment:
   status: enriched
   artifacts_added: 26
   pass: local-v3
+x-a2a:
+  verified: true
+  probed: '2026-09-26'
+  url: "https://llama.box/yo/.well-known/agent.json"
+  grade: "near-conformant"
+  protocol_version: "0.2.5"
+  control: 404

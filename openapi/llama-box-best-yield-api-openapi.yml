@@ -1,0 +1,203 @@
+openapi: 3.2.0
+info:
+  title: Llama Box Best Yield API
+  version: 1.1.0
+  description: 'Operations tagged Best Yield across 2 of this provider''s published API definitions: llama-box-crvusd-yield-optimizer-openapi-original.json, llama-box-crvusd-yield-optimizer-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: /yo
+tags:
+- name: Best Yield
+paths:
+  /api/best-yield:
+    get:
+      summary: Best Yield
+      description: 'Return top N pools by APY.
+
+
+        Examples:
+
+        - /api/best-yield?top=5&chain=ethereum
+
+        - /api/best-yield?top=10&risk=medium'
+      operationId: best_yield_api_best_yield_get
+      parameters:
+      - name: top
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+          description: Number of top pools to return
+          default: 5
+          title: Top
+        description: Number of top pools to return
+      - name: chain
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by chain
+          title: Chain
+        description: Filter by chain
+      - name: source
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by source
+          title: Source
+        description: Filter by source
+      - name: risk
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Max risk level (low, medium, high)
+          title: Risk
+        description: Max risk level (low, medium, high)
+      - name: X-API-Key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BestYieldResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Best Yield
+    servers:
+    - url: /yo
+components:
+  schemas:
+    PoolResponse:
+      properties:
+        pool_id:
+          type: string
+          title: Pool Id
+        name:
+          type: string
+          title: Name
+        address:
+          type: string
+          title: Address
+        apy:
+          type: number
+          title: Apy
+        tvl:
+          type: number
+          title: Tvl
+        source:
+          type: string
+          title: Source
+        chain:
+          type: string
+          title: Chain
+          default: ethereum
+        risk:
+          type: string
+          title: Risk
+          default: medium
+        base_apy:
+          type: number
+          title: Base Apy
+          default: 0.0
+        reward_apy:
+          type: number
+          title: Reward Apy
+          default: 0.0
+        gas_cost_usd:
+          type: number
+          title: Gas Cost Usd
+          default: 15.0
+        extra:
+          additionalProperties: true
+          type: object
+          title: Extra
+          default: {}
+      type: object
+      required:
+      - pool_id
+      - name
+      - address
+      - apy
+      - tvl
+      - source
+      title: PoolResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    BestYieldResponse:
+      properties:
+        pools:
+          items:
+            $ref: '#/components/schemas/PoolResponse'
+          type: array
+          title: Pools
+        count:
+          type: integer
+          title: Count
+        chain_filter:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Chain Filter
+      type: object
+      required:
+      - pools
+      - count
+      title: BestYieldResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+x-refined-from:
+- llama-box-crvusd-yield-optimizer-openapi-original.json
+- llama-box-crvusd-yield-optimizer-openapi.yml

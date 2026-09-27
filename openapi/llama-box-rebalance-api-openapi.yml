@@ -1,0 +1,213 @@
+openapi: 3.2.0
+info:
+  title: Llama Box Rebalance API
+  version: 1.1.0
+  description: 'Operations tagged Rebalance across 2 of this provider''s published API definitions: llama-box-crvusd-yield-optimizer-openapi-original.json, llama-box-crvusd-yield-optimizer-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: /yo
+tags:
+- name: Rebalance
+paths:
+  /api/rebalance:
+    post:
+      summary: Simulate Rebalance
+      description: 'Simulate rebalance: accept current allocation, suggest optimal.
+
+        Requires pro or enterprise tier.
+
+
+        Send your current positions and get recommendations for optimal allocation.
+
+
+        Example body:
+
+        ```json
+
+        {
+
+        "current_allocation": [
+
+        {"pool_address": "0x0655977FEb2f289A4aB78af67BAB0d17aAb84367", "chain": "ethereum", "amount_usd": 5000}
+
+        ],
+
+        "risk_tolerance": "medium",
+
+        "position_size": 10000
+
+        }
+
+        ```'
+      operationId: simulate_rebalance_api_rebalance_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RebalanceRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RebalanceResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Rebalance
+    servers:
+    - url: /yo
+components:
+  schemas:
+    RebalanceAction:
+      properties:
+        action:
+          type: string
+          title: Action
+        pool_name:
+          type: string
+          title: Pool Name
+        pool_address:
+          type: string
+          title: Pool Address
+        chain:
+          type: string
+          title: Chain
+        current_amount_usd:
+          type: number
+          title: Current Amount Usd
+          default: 0
+        suggested_amount_usd:
+          type: number
+          title: Suggested Amount Usd
+          default: 0
+        apy:
+          type: number
+          title: Apy
+          default: 0
+        reason:
+          type: string
+          title: Reason
+          default: ''
+      type: object
+      required:
+      - action
+      - pool_name
+      - pool_address
+      - chain
+      title: RebalanceAction
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    AllocationItem:
+      properties:
+        pool_address:
+          type: string
+          title: Pool Address
+        chain:
+          type: string
+          title: Chain
+          default: ethereum
+        amount_usd:
+          type: number
+          title: Amount Usd
+      type: object
+      required:
+      - pool_address
+      - amount_usd
+      title: AllocationItem
+    RebalanceResponse:
+      properties:
+        strategy:
+          type: string
+          title: Strategy
+        actions:
+          items:
+            $ref: '#/components/schemas/RebalanceAction'
+          type: array
+          title: Actions
+        current_total_usd:
+          type: number
+          title: Current Total Usd
+        expected_blended_apy:
+          type: number
+          title: Expected Blended Apy
+        rationale:
+          type: string
+          title: Rationale
+      type: object
+      required:
+      - strategy
+      - actions
+      - current_total_usd
+      - expected_blended_apy
+      - rationale
+      title: RebalanceResponse
+    RebalanceRequest:
+      properties:
+        current_allocation:
+          items:
+            $ref: '#/components/schemas/AllocationItem'
+          type: array
+          title: Current Allocation
+        risk_tolerance:
+          type: string
+          title: Risk Tolerance
+          default: high
+        position_size:
+          type: number
+          title: Position Size
+          default: 10000
+      type: object
+      required:
+      - current_allocation
+      title: RebalanceRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- llama-box-crvusd-yield-optimizer-openapi-original.json
+- llama-box-crvusd-yield-optimizer-openapi.yml

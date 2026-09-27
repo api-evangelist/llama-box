@@ -1,0 +1,136 @@
+openapi: 3.2.0
+info:
+  title: Llama Box Risk Score API
+  version: 1.1.0
+  description: 'Operations tagged Risk Score across 2 of this provider''s published API definitions: llama-box-crvusd-yield-optimizer-openapi-original.json, llama-box-crvusd-yield-optimizer-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: /yo
+tags:
+- name: Risk Score
+paths:
+  /api/risk-score/{pool_id}:
+    get:
+      summary: Risk Score
+      description: 'Risk assessment for a specific pool.
+
+
+        The pool_id is a 12-character hash from /api/pools response.
+
+        You can also use the pool address (0x...) as pool_id.'
+      operationId: risk_score_api_risk_score__pool_id__get
+      parameters:
+      - name: pool_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Pool Id
+      - name: X-API-Key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RiskScoreResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Risk Score
+    servers:
+    - url: /yo
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    RiskScoreResponse:
+      properties:
+        pool_id:
+          type: string
+          title: Pool Id
+        pool_name:
+          type: string
+          title: Pool Name
+        address:
+          type: string
+          title: Address
+        chain:
+          type: string
+          title: Chain
+        source:
+          type: string
+          title: Source
+        risk_level:
+          type: string
+          title: Risk Level
+        risk_score:
+          type: integer
+          title: Risk Score
+          description: 0-100, higher = riskier
+        factors:
+          items:
+            type: string
+          type: array
+          title: Factors
+        recommendation:
+          type: string
+          title: Recommendation
+      type: object
+      required:
+      - pool_id
+      - pool_name
+      - address
+      - chain
+      - source
+      - risk_level
+      - risk_score
+      - factors
+      - recommendation
+      title: RiskScoreResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+x-refined-from:
+- llama-box-crvusd-yield-optimizer-openapi-original.json
+- llama-box-crvusd-yield-optimizer-openapi.yml

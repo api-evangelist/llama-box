@@ -1,0 +1,208 @@
+openapi: 3.2.0
+info:
+  title: Llama Box A2a API
+  version: 1.1.0
+  description: 'Operations tagged A2a across 2 of this provider''s published API definitions: llama-box-crvusd-yield-optimizer-openapi-original.json, llama-box-crvusd-yield-optimizer-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: /yo
+tags:
+- name: A2a
+paths:
+  /a2a:
+    post:
+      summary: A2A Endpoint
+      description: 'A2A JSON-RPC 2.0 endpoint.
+
+
+        Supports A2A protocol methods:
+
+        - message/send: Send a task to the agent (natural language or structured)
+
+        - tasks/get: Retrieve task status and results by ID
+
+        - tasks/cancel: Cancel a running task
+
+
+        Legacy aliases also supported: SendMessage, GetTask, CancelTask, ListTasks.
+
+
+        Example - Natural language:
+
+        ```json
+
+        {
+
+        "jsonrpc": "2.0",
+
+        "method": "message/send",
+
+        "params": {
+
+        "message": {
+
+        "role": "user",
+
+        "parts": [{"type": "text", "text": "find best yield for 10000 crvUSD"}]
+
+        }
+
+        },
+
+        "id": 1
+
+        }
+
+        ```
+
+
+        Example - Explicit skill:
+
+        ```json
+
+        {
+
+        "jsonrpc": "2.0",
+
+        "method": "message/send",
+
+        "params": {
+
+        "skill": "best-yield",
+
+        "message": {
+
+        "role": "user",
+
+        "parts": [{"type": "data", "data": {"chain": "ethereum", "top": 5}}]
+
+        }
+
+        },
+
+        "id": 1
+
+        }
+
+        ```'
+      operationId: a2a_endpoint_a2a_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - A2a
+    servers:
+    - url: /yo
+  /a2a/stream:
+    post:
+      summary: A2A Stream Endpoint
+      description: 'A2A SSE streaming endpoint (message/stream).
+
+
+        Same request format as /a2a but returns Server-Sent Events stream
+
+        with real-time task status updates and results.
+
+
+        Example:
+
+        ```json
+
+        {
+
+        "skill": "best-yield",
+
+        "message": {
+
+        "role": "user",
+
+        "parts": [{"type": "text", "text": "find best yield"}]
+
+        }
+
+        }
+
+        ```'
+      operationId: a2a_stream_endpoint_a2a_stream_post
+      parameters:
+      - name: X-API-Key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - A2a
+    servers:
+    - url: /yo
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+x-refined-from:
+- llama-box-crvusd-yield-optimizer-openapi-original.json
+- llama-box-crvusd-yield-optimizer-openapi.yml

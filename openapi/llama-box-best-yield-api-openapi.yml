@@ -1,8 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Llama Box Best Yield API
+  title: crvUSD Yield Optimizer Best Yield API
+  description: 'Multi-chain crvUSD yield optimizer with A2A protocol support. Sources: scrvUSD, LlamaLend, Convex, StakeDAO. Chains: Ethereum, Arbitrum, Base, Optimism, Fraxtal. Supports Google A2A (Agent-to-Agent) protocol for agent interoperability.'
   version: 1.1.0
-  description: 'Operations tagged Best Yield across 2 of this provider''s published API definitions: llama-box-crvusd-yield-optimizer-openapi-original.json, llama-box-crvusd-yield-optimizer-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: /yo
 tags:
@@ -85,10 +85,63 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       tags:
       - Best Yield
-    servers:
-    - url: /yo
 components:
   schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    BestYieldResponse:
+      properties:
+        pools:
+          items:
+            $ref: '#/components/schemas/PoolResponse'
+          type: array
+          title: Pools
+        count:
+          type: integer
+          title: Count
+        chain_filter:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Chain Filter
+      type: object
+      required:
+      - pools
+      - count
+      title: BestYieldResponse
     PoolResponse:
       properties:
         pool_id:
@@ -143,61 +196,3 @@ components:
       - tvl
       - source
       title: PoolResponse
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    BestYieldResponse:
-      properties:
-        pools:
-          items:
-            $ref: '#/components/schemas/PoolResponse'
-          type: array
-          title: Pools
-        count:
-          type: integer
-          title: Count
-        chain_filter:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Chain Filter
-      type: object
-      required:
-      - pools
-      - count
-      title: BestYieldResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-x-refined-from:
-- llama-box-crvusd-yield-optimizer-openapi-original.json
-- llama-box-crvusd-yield-optimizer-openapi.yml

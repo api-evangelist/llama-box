@@ -1,8 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Llama Box Pools API
+  title: crvUSD Yield Optimizer Pools API
+  description: 'Multi-chain crvUSD yield optimizer with A2A protocol support. Sources: scrvUSD, LlamaLend, Convex, StakeDAO. Chains: Ethereum, Arbitrum, Base, Optimism, Fraxtal. Supports Google A2A (Agent-to-Agent) protocol for agent interoperability.'
   version: 1.1.0
-  description: 'Operations tagged Pools across 2 of this provider''s published API definitions: llama-box-crvusd-yield-optimizer-openapi-original.json, llama-box-crvusd-yield-optimizer-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: /yo
 tags:
@@ -133,8 +133,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       tags:
       - Pools
-    servers:
-    - url: /yo
 components:
   schemas:
     PoolsListResponse:
@@ -166,6 +164,32 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     PoolResponse:
       properties:
         pool_id:
@@ -220,32 +244,3 @@ components:
       - tvl
       - source
       title: PoolResponse
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-x-refined-from:
-- llama-box-crvusd-yield-optimizer-openapi-original.json
-- llama-box-crvusd-yield-optimizer-openapi.yml

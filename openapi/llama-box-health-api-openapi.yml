@@ -1,8 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Llama Box Health API
+  title: crvUSD Yield Optimizer Health API
+  description: 'Multi-chain crvUSD yield optimizer with A2A protocol support. Sources: scrvUSD, LlamaLend, Convex, StakeDAO. Chains: Ethereum, Arbitrum, Base, Optimism, Fraxtal. Supports Google A2A (Agent-to-Agent) protocol for agent interoperability.'
   version: 1.1.0
-  description: 'Operations tagged Health across 2 of this provider''s published API definitions: llama-box-crvusd-yield-optimizer-openapi-original.json, llama-box-crvusd-yield-optimizer-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: /yo
 tags:
@@ -20,8 +20,3 @@ paths:
               schema: {}
       tags:
       - Health
-    servers:
-    - url: /yo
-x-refined-from:
-- llama-box-crvusd-yield-optimizer-openapi-original.json
-- llama-box-crvusd-yield-optimizer-openapi.yml

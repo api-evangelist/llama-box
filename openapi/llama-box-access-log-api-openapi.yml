@@ -1,8 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Llama Box Access Log API
+  title: crvUSD Yield Optimizer Access Log API
+  description: 'Multi-chain crvUSD yield optimizer with A2A protocol support. Sources: scrvUSD, LlamaLend, Convex, StakeDAO. Chains: Ethereum, Arbitrum, Base, Optimism, Fraxtal. Supports Google A2A (Agent-to-Agent) protocol for agent interoperability.'
   version: 1.1.0
-  description: 'Operations tagged Access Log across 2 of this provider''s published API definitions: llama-box-crvusd-yield-optimizer-openapi-original.json, llama-box-crvusd-yield-optimizer-openapi.yml. Each path carries the servers of the definition it was published in.'
 servers:
 - url: /yo
 tags:
@@ -42,8 +42,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       tags:
       - Access Log
-    servers:
-    - url: /yo
 components:
   schemas:
     HTTPValidationError:
@@ -81,6 +79,3 @@ components:
       - msg
       - type
       title: ValidationError
-x-refined-from:
-- llama-box-crvusd-yield-optimizer-openapi-original.json
-- llama-box-crvusd-yield-optimizer-openapi.yml

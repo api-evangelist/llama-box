@@ -71,6 +71,15 @@ paths:
       - Rebalance
 components:
   schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     AllocationItem:
       properties:
         pool_address:
@@ -125,34 +134,32 @@ components:
       - pool_address
       - chain
       title: RebalanceAction
-    HTTPValidationError:
+    ValidationError:
       properties:
-        detail:
+        loc:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-    RebalanceRequest:
-      properties:
-        current_allocation:
-          items:
-            $ref: '#/components/schemas/AllocationItem'
-          type: array
-          title: Current Allocation
-        risk_tolerance:
+          title: Location
+        msg:
           type: string
-          title: Risk Tolerance
-          default: high
-        position_size:
-          type: number
-          title: Position Size
-          default: 10000
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
       required:
-      - current_allocation
-      title: RebalanceRequest
+      - loc
+      - msg
+      - type
+      title: ValidationError
     RebalanceResponse:
       properties:
         strategy:
@@ -180,29 +187,22 @@ components:
       - expected_blended_apy
       - rationale
       title: RebalanceResponse
-    ValidationError:
+    RebalanceRequest:
       properties:
-        loc:
+        current_allocation:
           items:
-            anyOf:
-            - type: string
-            - type: integer
+            $ref: '#/components/schemas/AllocationItem'
           type: array
-          title: Location
-        msg:
+          title: Current Allocation
+        risk_tolerance:
           type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
+          title: Risk Tolerance
+          default: high
+        position_size:
+          type: number
+          title: Position Size
+          default: 10000
       type: object
       required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
+      - current_allocation
+      title: RebalanceRequest

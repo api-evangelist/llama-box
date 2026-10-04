@@ -81,6 +81,8 @@ apis:
   humanURL: https://llama.box/yo/docs
   baseURL: https://llama.box/yo
   tags:
+  - A2A
+  tags_raw:
   - A2a
   properties:
   - type: OpenAPI

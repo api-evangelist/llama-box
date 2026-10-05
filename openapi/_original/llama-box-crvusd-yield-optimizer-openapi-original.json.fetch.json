@@ -1,0 +1,12 @@
+{
+ "url": "https://llama.box/yo/openapi.json",
+ "requested_url": "https://llama.box/yo/openapi.json",
+ "status": 200,
+ "content_type": "application/json",
+ "bytes": 14743,
+ "sha256": "a048f77eaed71b352d8a36850af6dc225fa94d0b4e4463ec7d062d08994f7a62",
+ "fetched_at": "2026-10-04",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "Re-fetched from the provider by verify-openapi-sources.py; the archived file is byte-identical to what the provider serves."
+}

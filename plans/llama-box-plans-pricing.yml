@@ -45,3 +45,25 @@ unpublished_tiers:
   price: null
   note: No page, price or signup found; the only route to it is the contact address api@chado.studio in /api/pricing.
 contact: api@chado.studio
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - free
+  - metered
+  units: []
+  plans:
+  - name: Free endpoints
+    access: other
+    model: free
+    model_how: derived
+    units: []
+    periods:
+    - other
+  - name: Pay-per-request (x402)
+    access: other
+    model: metered
+    model_how: derived
+    units: []
+    periods:
+    - other

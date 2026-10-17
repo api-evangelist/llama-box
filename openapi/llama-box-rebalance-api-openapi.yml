@@ -71,15 +71,32 @@ paths:
       - Rebalance
 components:
   schemas:
-    HTTPValidationError:
+    ValidationError:
       properties:
-        detail:
+        loc:
           items:
-            $ref: '#/components/schemas/ValidationError'
+            anyOf:
+            - type: string
+            - type: integer
           type: array
-          title: Detail
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
       type: object
-      title: HTTPValidationError
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
     AllocationItem:
       properties:
         pool_address:
@@ -97,6 +114,61 @@ components:
       - pool_address
       - amount_usd
       title: AllocationItem
+    RebalanceResponse:
+      properties:
+        strategy:
+          type: string
+          title: Strategy
+        actions:
+          items:
+            $ref: '#/components/schemas/RebalanceAction'
+          type: array
+          title: Actions
+        current_total_usd:
+          type: number
+          title: Current Total Usd
+        expected_blended_apy:
+          type: number
+          title: Expected Blended Apy
+        rationale:
+          type: string
+          title: Rationale
+      type: object
+      required:
+      - strategy
+      - actions
+      - current_total_usd
+      - expected_blended_apy
+      - rationale
+      title: RebalanceResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    RebalanceRequest:
+      properties:
+        current_allocation:
+          items:
+            $ref: '#/components/schemas/AllocationItem'
+          type: array
+          title: Current Allocation
+        risk_tolerance:
+          type: string
+          title: Risk Tolerance
+          default: high
+        position_size:
+          type: number
+          title: Position Size
+          default: 10000
+      type: object
+      required:
+      - current_allocation
+      title: RebalanceRequest
     RebalanceAction:
       properties:
         action:
@@ -134,75 +206,3 @@ components:
       - pool_address
       - chain
       title: RebalanceAction
-    ValidationError:
-      properties:
-        loc:
-          items:
-            anyOf:
-            - type: string
-            - type: integer
-          type: array
-          title: Location
-        msg:
-          type: string
-          title: Message
-        type:
-          type: string
-          title: Error Type
-        input:
-          title: Input
-        ctx:
-          type: object
-          title: Context
-      type: object
-      required:
-      - loc
-      - msg
-      - type
-      title: ValidationError
-    RebalanceResponse:
-      properties:
-        strategy:
-          type: string
-          title: Strategy
-        actions:
-          items:
-            $ref: '#/components/schemas/RebalanceAction'
-          type: array
-          title: Actions
-        current_total_usd:
-          type: number
-          title: Current Total Usd
-        expected_blended_apy:
-          type: number
-          title: Expected Blended Apy
-        rationale:
-          type: string
-          title: Rationale
-      type: object
-      required:
-      - strategy
-      - actions
-      - current_total_usd
-      - expected_blended_apy
-      - rationale
-      title: RebalanceResponse
-    RebalanceRequest:
-      properties:
-        current_allocation:
-          items:
-            $ref: '#/components/schemas/AllocationItem'
-          type: array
-          title: Current Allocation
-        risk_tolerance:
-          type: string
-          title: Risk Tolerance
-          default: high
-        position_size:
-          type: number
-          title: Position Size
-          default: 10000
-      type: object
-      required:
-      - current_allocation
-      title: RebalanceRequest

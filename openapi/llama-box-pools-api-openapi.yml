@@ -135,26 +135,15 @@ paths:
       - Pools
 components:
   schemas:
-    PoolsListResponse:
+    HTTPValidationError:
       properties:
-        pools:
+        detail:
           items:
-            $ref: '#/components/schemas/PoolResponse'
+            $ref: '#/components/schemas/ValidationError'
           type: array
-          title: Pools
-        total:
-          type: integer
-          title: Total
-        filters_applied:
-          additionalProperties: true
-          type: object
-          title: Filters Applied
-          default: {}
+          title: Detail
       type: object
-      required:
-      - pools
-      - total
-      title: PoolsListResponse
+      title: HTTPValidationError
     PoolResponse:
       properties:
         pool_id:
@@ -209,6 +198,26 @@ components:
       - tvl
       - source
       title: PoolResponse
+    PoolsListResponse:
+      properties:
+        pools:
+          items:
+            $ref: '#/components/schemas/PoolResponse'
+          type: array
+          title: Pools
+        total:
+          type: integer
+          title: Total
+        filters_applied:
+          additionalProperties: true
+          type: object
+          title: Filters Applied
+          default: {}
+      type: object
+      required:
+      - pools
+      - total
+      title: PoolsListResponse
     ValidationError:
       properties:
         loc:
@@ -235,12 +244,3 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError

@@ -64,10 +64,126 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Chado Studio operates llama.box, a desktop-style hub for the Curve Finance ecosystem, and the crvUSD Yield Optimizer API mounted at https://llama.box/yo — an OpenAPI 3.1.0 contract (10 operations, Swagger UI and ReDoc), an A2A 0.2.5 agent card at /yo/.well-known/agent.json with four skills, and per-request x402 payment in USDC on the Base Sepolia testnet for the risk-score, rebalance and A2A calls. Surfaced via the API Evangelist harvest backlog (source: a2a-registry) and profiled 2026-09-19.
+Chado Studio (contact api@chado.studio) operates llama.box, a desktop-style hub for the Curve Finance ecosystem — dashboards, analytics and curated links for Curve, crvUSD, LlamaLend, YieldBasis, Convex, Stake DAO, Yearn and Resupply. Its one machine-readable surface is the crvUSD Yield Optimizer, a FastAPI service mounted at https://llama.box/yo that discovers crvUSD yield across scrvUSD, LlamaLend, Convex and StakeDAO on Ethereum, Arbitrum, Base, Optimism and Fraxtal, scores pool risk 0-100 and simulates rebalances. It publishes an OpenAPI 3.1.0 contract (10 operations) at /yo/openapi.json with Swagger UI and ReDoc, an A2A 0.2.5 agent card at /yo/.well-known/agent.json declaring four skills, and charges for the risk, rebalance and A2A calls per request through the x402 protocol in USDC on the Base Sepolia testnet. The hub itself serves an llms.txt and a robots.txt that allows every major AI crawler.
 
-- Website: https://llama.box/
-- API reference (Swagger UI): https://llama.box/yo/docs
-- OpenAPI: https://llama.box/yo/openapi.json
-- Agent card: https://llama.box/yo/.well-known/agent.json
-- Pricing (x402): https://llama.box/yo/api/pricing
+**Areas:** Agents · A2A · x402 · DeFi · Yield · Curve Finance · crvUSD · Stablecoins · Risk Scoring · Analytics · Agent-Native
+
+## Chado Studio on APIs.io
+
+Everything profiled for Chado Studio is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/llama-box/](https://apis.io/providers/llama-box/)** — or go straight to one of the APIs or properties below.
+
+### APIs (10)
+
+- [crvUSD Yield Optimizer A2A Agent](https://apis.io/apis/llama-box/crvusd-yield-optimizer-a2a-agent/) — Agent2Agent surface of the same service: an agent card at https://llama.box/yo/.well-known/agent.json (protocolVersion 0.2.5, version 1.1.0, provider "Chado…
+- [Chado Studio A2a API](https://apis.io/apis/llama-box/llama-box-a2a-api/) — The A2a API from Chado Studio — 2 operation(s) for a2a.
+- [Chado Studio Access Log API](https://apis.io/apis/llama-box/llama-box-access-log-api/) — The Access Log API from Chado Studio — 1 operation(s) for access log.
+- [Chado Studio Best Yield API](https://apis.io/apis/llama-box/llama-box-best-yield-api/) — The Best Yield API from Chado Studio — 1 operation(s) for best yield.
+- [Chado Studio Health API](https://apis.io/apis/llama-box/llama-box-health-api/) — The Health API from Chado Studio — 1 operation(s) for health.
+- [Chado Studio Pools API](https://apis.io/apis/llama-box/llama-box-pools-api/) — The Pools API from Chado Studio — 1 operation(s) for pools.
+- [Chado Studio Pricing API](https://apis.io/apis/llama-box/llama-box-pricing-api/) — The Pricing API from Chado Studio — 1 operation(s) for pricing.
+- [Chado Studio Rebalance API](https://apis.io/apis/llama-box/llama-box-rebalance-api/) — The Rebalance API from Chado Studio — 1 operation(s) for rebalance.
+- [Chado Studio Risk Score API](https://apis.io/apis/llama-box/llama-box-risk-score-api/) — The Risk Score API from Chado Studio — 1 operation(s) for risk score.
+- [Chado Studio .well Known API](https://apis.io/apis/llama-box/llama-box-well-known-api/) — The .well Known API from Chado Studio — 1 operation(s) for .well known.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [llama-box-crvusd-yield-optimizer](https://apis.io/servers/llama-box/llama-box-crvusd-yield-optimizer/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Llama Box Agentic Access](https://apis.io/agentic-access/llama-box/llama-box-agentic-access/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Llama Box Crvusd Yield Optimizer Overlay](https://apis.io/overlays/llama-box/llama-box-crvusd-yield-optimizer-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Llama Box Authentication](https://apis.io/security/llama-box/llama-box-authentication/)
+- [Llama Box Domain Security](https://apis.io/security/llama-box/llama-box-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Llama Box Plans Pricing](https://apis.io/plans/llama-box/llama-box-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Llama Box Rate Limits](https://apis.io/rate-limits/llama-box/llama-box-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://llama.box/)
+- [Documentation](https://llama.box/yo/redoc)
+- [API reference](https://llama.box/yo/docs)
+- [Pricing](https://llama.box/yo/api/pricing)
+
+## API Evangelist rating
+
+**Kin Score 33.5** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 78.6 |
+| Contract quality | 40.6 |
+| Contract governance | 18.2 |
+| Operational transparency | 0.0 |
+| Developer ergonomics | 37.5 |
+| Access clarity | 31.6 |
+
+**Agent readiness 29.9** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | near-conformant (partial credit) |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 16.7** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/llama-box/](https://apis.io/providers/llama-box/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Chado Studio: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/llama-box/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
